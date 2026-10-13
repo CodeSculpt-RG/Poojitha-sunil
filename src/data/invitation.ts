@@ -13,22 +13,20 @@ export const invitation = {
   dateLine: "11–13 December 2026",
   timezone: "Asia/Kolkata",
   muhurthamISO: "2026-12-13T04:05:00+05:30",
-  venue: { name: "Agrasen Bhavan", locality: "New Khursipar", search: "Agrasen Bhavan, New Khursipar" },
+  venue: {
+    name: "Agrasen Bhavan",
+    locality: "New Khursipar, Bhilai",
+    address: "6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
+    fullAddress: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
+  },
   brother: "Sheshu Sai",
   pets: ["Max", "Mummble", "Evii", "Pica", "Guffy"],
   assets: {
     templeFacade: "/media/temple-facade.jpg",
-    templeDoors: "/media/temple-doors.jpg",
     couplePortraitOne: "/media/couple-portrait-01.jpeg",
     couplePortraitTwo: "/media/couple-portrait-02.jpeg",
-    films: [
-      { src: "/media/couple-film-1.mp4", poster: "/media/couple-film-1-poster.jpg", label: "Sunrise" },
-      { src: "/media/couple-film-2.mp4", poster: "/media/couple-film-2-poster.jpg", label: "Together" },
-      { src: "/media/couple-film-3.mp4", poster: "/media/couple-film-3-poster.jpg", label: "By the falls" },
-      { src: "/media/couple-film-4.mp4", poster: "/media/couple-film-4-poster.jpg", label: "The climb" },
-    ],
+    film: { src: "/media/couple-film-3.mp4", poster: "/media/couple-film-3-poster.jpg" },
     petSticker: "/media/max-mummble.jpeg",
-    backgroundAudio: null as string | null,
   },
   events: [
     { id: "rata", date: "2026-12-11", label: "Rata", start: "07:30", end: "08:30" },
@@ -37,7 +35,7 @@ export const invitation = {
     { id: "haldi", date: "2026-12-12", label: "Haldi", start: "14:30", featured: true },
     { id: "barat", date: "2026-12-12", label: "Barat", start: "18:00", featured: true },
     { id: "reception", date: "2026-12-12", label: "Reception", start: "19:30", featured: true },
-    { id: "muhurtham", date: "2026-12-13", label: "Muhurtham", start: "04:05", venue: "Agrasen Bhavan, New Khursipar", featured: true },
+    { id: "muhurtham", date: "2026-12-13", label: "Muhurtham", start: "04:05", venue: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011", featured: true },
   ] satisfies WeddingEvent[],
 } as const;
 
