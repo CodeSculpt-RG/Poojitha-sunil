@@ -20,12 +20,12 @@ export const invitation = {
     fullAddress: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
   },
   brother: "Sheshu Sai",
-  pets: ["Max", "Mummble", "Evii", "Pica", "Guffy"],
+  pets: ["Mummble", "Max"],
   assets: {
     templeFacade: "/media/temple-facade.jpg",
     couplePortraitOne: "/media/couple-portrait-01.jpeg",
     couplePortraitTwo: "/media/couple-portrait-02.jpeg",
-    film: { src: "/media/couple-film-3.mp4", poster: "/media/couple-film-3-poster.jpg" },
+    film: { src: "/assets/v2.mp4", poster: "/media/couple-film-2-poster.jpg" },
     petSticker: "/media/max-mummble.jpeg",
   },
   events: [

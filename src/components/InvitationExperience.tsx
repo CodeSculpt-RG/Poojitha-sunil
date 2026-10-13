@@ -25,10 +25,75 @@ function downloadCalendar(event: WeddingEvent) {
   const anchor = document.createElement("a"); anchor.href = url; anchor.download = `sunil-pooja-${event.id}.ics`; anchor.click(); URL.revokeObjectURL(url);
 }
 function HeroInvitation() {
-  return <section className="hero" id="invitation" aria-labelledby="invitation-title"><div className="hero__stage">
-    <Image className="hero__architecture" src={invitation.assets.templeFacade} width={1024} height={1536} priority sizes="(max-width: 900px) 540px, 960px" alt="" />
-    <div className="hero__card"><p className="hero__blessing">With the blessings of Lord Ganesha</p><h1 id="invitation-title"><span>Sunil</span><i>&amp;</i><span>Pooja</span></h1><p className="hero__message">Together with our families, we invite you to celebrate our wedding.</p><div className="hero__details"><p className="hero__date">{invitation.dateLine}</p><p className="hero__muhurtham">Muhurtham · 13 December, 4:05 AM IST</p></div><a className="button hero__action" href="#celebrations">View celebrations <span aria-hidden="true">↓</span></a></div>
-  </div></section>;
+  const onContinue = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const target = document.getElementById("story");
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  return (
+    <section className="hero" id="invitation" aria-labelledby="invitation-title">
+      <div className="hero__frame" aria-hidden="true">
+        <Image
+          className="hero__temple-art"
+          src={invitation.assets.templeFacade}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+        />
+        <div className="hero__ambient" />
+      </div>
+
+      <div className="hero__container">
+        <div className="hero__card">
+          <div className="hero__blessing-wrap">
+            <p className="hero__blessing">With the blessings of Lord Ganesha</p>
+            <div className="hero__blessing-divider" aria-hidden="true">
+              <span />
+              <i>❖</i>
+              <span />
+            </div>
+          </div>
+
+          <h1 id="invitation-title" className="hero__names">
+            <span className="hero__name hero__name--first">{invitation.couple.first}</span>
+            <span className="hero__ampersand" aria-hidden="true">&amp;</span>
+            <span className="hero__name hero__name--second">{invitation.couple.second}</span>
+          </h1>
+
+          <p className="hero__invitation-text">
+            Together with our families, we invite you to celebrate our wedding.
+          </p>
+
+          <div className="hero__meta">
+            <p className="hero__date">{invitation.dateLine}</p>
+            <p className="hero__muhurtham">Muhurtham · 13 December, 4:05 AM IST</p>
+          </div>
+
+          <div className="hero__action-wrap">
+            <a
+              className="hero__action"
+              href="#story"
+              onClick={onContinue}
+              aria-label="View celebrations, continue to wedding story"
+            >
+              <span>View celebrations</span>
+              <span className="hero__action-icon" aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+
+        <div className="hero__scroll-cue" aria-hidden="true">
+          <span className="hero__scroll-line" />
+        </div>
+      </div>
+
+      <div className="hero__transition" aria-hidden="true" />
+    </section>
+  );
 }
 
 function PetSticker() {
@@ -140,7 +205,32 @@ function CoupleFilm() {
 }
 export function InvitationExperience() {
   const main = useRef<HTMLElement>(null); const [shareLabel, setShareLabel] = useState("Share invitation");
-  useGSAP(() => { if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; gsap.fromTo(".hero__card > *", { y: 12, opacity: .45 }, { y: 0, opacity: 1, duration: .6, stagger: .045, ease: "power2.out" }); gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(element => gsap.fromTo(element, { y: 18 }, { y: 0, duration: .7, ease: "power2.out", immediateRender: false, scrollTrigger: { trigger: element, start: "top 88%", once: true } })); }, { scope: main });
+  useGSAP(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+    tl.fromTo(".hero__temple-art", { opacity: 0.65, scale: 1.02 }, { opacity: 1, scale: 1, duration: 1.1 })
+      .fromTo(".hero__card", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8 }, "-=0.8")
+      .fromTo(".hero__blessing-wrap", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.55")
+      .fromTo(".hero__name--first", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.35")
+      .fromTo(".hero__ampersand", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4 }, "-=0.35")
+      .fromTo(".hero__name--second", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.35")
+      .fromTo(".hero__invitation-text", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
+      .fromTo(".hero__meta", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.3")
+      .fromTo(".hero__action-wrap", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.25")
+      .fromTo(".hero__scroll-cue", { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.2");
+
+    gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach(element => {
+      gsap.fromTo(element, { y: 18, opacity: 0.85 }, {
+        y: 0,
+        opacity: 1,
+        duration: 0.7,
+        ease: "power2.out",
+        immediateRender: false,
+        scrollTrigger: { trigger: element, start: "top 88%", once: true }
+      });
+    });
+  }, { scope: main });
   const share = async () => { const data = { title: "Sunil & Pooja — Wedding Invitation", text: "Join us for Sunil & Pooja’s wedding celebrations, 11–13 December 2026. Muhurtham: 13 December at 4:05 AM IST.", url: location.href }; try { if (navigator.share) await navigator.share(data); else { await navigator.clipboard.writeText(`${data.text} ${data.url}`); setShareLabel("Invitation copied"); window.setTimeout(() => setShareLabel("Share invitation"), 1800); } } catch { /* sharing cancelled */ } };
   return <main ref={main}><HeroInvitation />
     <section className="story section" id="story" aria-labelledby="story-title"><div className="container story__grid"><div className="story__portraits" data-reveal><figure className="arched-photo arched-photo--main"><Image src={invitation.assets.couplePortraitOne} fill sizes="(max-width: 767px) 78vw, 460px" alt="Sunil and Pooja walking hand in hand" /></figure><figure className="arched-photo arched-photo--inset"><Image src={invitation.assets.couplePortraitTwo} fill sizes="(max-width: 767px) 42vw, 230px" alt="Sunil and Pooja together by a waterfall" /></figure></div><div className="story__copy" data-reveal><h2 id="story-title">Two hearts, one beginning</h2><FloralDivider /><p>As we begin this new chapter, your presence and blessings would make our celebration complete.</p><p className="signature">Sunil <i>&amp;</i> Pooja</p></div></div></section>

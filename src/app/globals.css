@@ -1,12 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@400;500;600&display=swap');
 
 :root {
   --ivory: #f7f1e5;
-  --paper: #fffaf0;
+  --paper: #fbf8f2;
   --burgundy: #671c2d;
   --wine: #431523;
   --green: #244b40;
   --gold: #ad8648;
+  --gold-light: #d6b278;
   --charcoal: #332c26;
   --muted: #73685d;
   --display: 'Cormorant Garamond', Georgia, serif;
@@ -34,62 +35,344 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .monogram::after { content: ''; position: absolute; inset: 6px; border: 1px solid currentColor; border-radius: 50%; opacity: .55; }
 .monogram i { margin: 0 -2px; font-size: 1.2rem; }
 
-/* One proportion-preserving temple frame around one invitation surface. */
-.hero { min-height: 820px; display: grid; place-items: start center; position: relative; overflow: hidden; background: var(--wine); }
-.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 42%, #763247 0, transparent 62%), repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 16px); }
-.hero__stage { width: min(960px, 100%); min-height: 820px; padding: 214px 0 52px; display: flex; justify-content: center; position: relative; }
-.hero__architecture { width: 960px; max-width: none; height: auto; position: absolute; top: 0; left: 50%; z-index: 0; transform: translateX(-50%); }
-.hero__card { width: min(560px, calc(100% - 330px)); min-width: 520px; min-height: 545px; padding: 54px 54px 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 1; text-align: center; background: rgba(247,241,229,.985); border: 1px solid var(--gold); box-shadow: 0 16px 42px rgba(30,10,13,.16); }
-.hero__blessing { margin: 0 0 27px; color: var(--burgundy); font: italic 500 clamp(1.15rem, 1.6vw, 1.4rem)/1.3 var(--display); }
-.hero h1 { margin: 0 0 28px; color: var(--burgundy); font: 500 clamp(4.8rem, 6.8vw, 6.6rem)/.86 var(--display); letter-spacing: -.06em; white-space: nowrap; }
-.hero h1 span { display: inline; }
-.hero h1 i { display: inline-block; margin-inline: .14em; color: var(--gold); font-size: .42em; font-weight: 400; vertical-align: .2em; }
-.hero__message { max-width: 36ch; margin-bottom: 24px; font-size: 1rem; line-height: 1.6; }
-.hero__details { margin-bottom: 28px; }
-.hero__date { margin-bottom: 4px; color: var(--wine); font: 600 1.2rem var(--display); white-space: nowrap; }
-.hero__muhurtham { margin-bottom: 0; font-size: .9rem; font-weight: 500; white-space: nowrap; }
-.hero__action { position: relative; min-width: 204px; }
+/* ==========================================================================
+   1. HERO: Ceremonial Temple Frame & Invitation Card
+   ========================================================================== */
+.hero {
+  min-height: 100svh;
+  height: 100svh;
+  min-height: 100dvh;
+  height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  background: #230a11;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(18px, env(safe-area-inset-bottom));
+}
 
-.story { background: var(--ivory); }
-.story__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, .8fr); gap: clamp(64px, 9vw, 130px); align-items: center; }
-.story__portraits { width: min(100%, 550px); max-width: 550px; padding: 22px 58px 62px 0; position: relative; }
+.hero__frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero__temple-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 10%;
+  transform: translateZ(0);
+}
+
+.hero__ambient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 68% at 50% 50%, rgba(20, 5, 10, 0.2) 0%, rgba(35, 10, 17, 0.62) 100%),
+    linear-gradient(180deg, rgba(28, 7, 13, 0.42) 0%, transparent 22%, transparent 72%, rgba(28, 7, 13, 0.58) 100%);
+}
+
+.hero__container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.hero__card {
+  width: min(380px, calc(100vw - 44px));
+  max-width: 380px;
+  padding: clamp(20px, 3.4vh, 32px) clamp(18px, 4.8vw, 32px) clamp(18px, 3vh, 26px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background: #fbf8f2;
+  background-image: linear-gradient(180deg, #fdfbf7 0%, #f9f3e6 100%);
+  border: 1px solid rgba(173, 134, 72, 0.5);
+  outline: 1px solid rgba(173, 134, 72, 0.25);
+  outline-offset: -5px;
+  box-shadow: 0 16px 40px rgba(26, 6, 12, 0.28), 0 2px 8px rgba(26, 6, 12, 0.12);
+  border-radius: 2px;
+}
+
+.hero__card::before,
+.hero__card::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-color: rgba(173, 134, 72, 0.45);
+  border-style: solid;
+}
+
+.hero__card::before {
+  top: 9px;
+  left: 9px;
+  border-width: 1px 0 0 1px;
+}
+
+.hero__card::after {
+  bottom: 9px;
+  right: 9px;
+  border-width: 0 1px 1px 0;
+}
+
+.hero__blessing-wrap {
+  margin-bottom: clamp(8px, 1.4vh, 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.hero__blessing {
+  margin: 0;
+  color: var(--burgundy);
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(0.96rem, 2.2vw, 1.15rem);
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+}
+
+.hero__blessing-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: var(--gold);
+  font-size: 0.52rem;
+  opacity: 0.85;
+}
+
+.hero__blessing-divider span {
+  width: 20px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.hero__names {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--burgundy);
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+}
+
+.hero__name {
+  display: block;
+  font-size: clamp(2.75rem, 7.6vw, 4.2rem);
+  color: var(--burgundy);
+  text-shadow: 0 1px 2px rgba(103, 28, 45, 0.05);
+}
+
+.hero__ampersand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-block: -0.06em;
+  color: var(--gold);
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 3.4vw, 1.75rem);
+  line-height: 1;
+  opacity: 0.95;
+}
+
+.hero__invitation-text {
+  margin: clamp(8px, 1.4vh, 12px) auto 0;
+  max-width: 28ch;
+  color: #4e4038;
+  font-family: var(--body);
+  font-size: clamp(0.84rem, 1.7vw, 0.92rem);
+  line-height: 1.46;
+  letter-spacing: 0.01em;
+}
+
+.hero__meta {
+  margin-top: clamp(8px, 1.4vh, 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hero__date {
+  margin: 0;
+  color: var(--wine);
+  font-family: var(--display);
+  font-size: clamp(1.08rem, 2.2vw, 1.3rem);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+.hero__muhurtham {
+  margin: 0;
+  color: #685a50;
+  font-family: var(--body);
+  font-size: clamp(0.75rem, 1.5vw, 0.82rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.hero__action-wrap {
+  margin-top: clamp(12px, 2vh, 18px);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.hero__action {
+  min-height: 44px;
+  padding: 10px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: var(--burgundy);
+  color: #fffaf2;
+  border: 1px solid rgba(173, 134, 72, 0.7);
+  border-radius: 2px;
+  font-family: var(--body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(103, 28, 45, 0.28);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero__action:hover {
+  background: var(--wine);
+  border-color: #d6b278;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(103, 28, 45, 0.35);
+}
+
+.hero__action:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(103, 28, 45, 0.2);
+}
+
+.hero__action-icon {
+  font-size: 0.92rem;
+  color: #e2c28e;
+  transition: transform 0.2s ease;
+}
+
+.hero__action:hover .hero__action-icon {
+  transform: translateY(2px);
+}
+
+.hero__scroll-cue {
+  margin-top: clamp(6px, 1.2vh, 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--gold);
+}
+
+.hero__scroll-line {
+  width: 1px;
+  height: clamp(12px, 1.8vh, 18px);
+  background: linear-gradient(to bottom, rgba(173, 134, 72, 0.8), transparent);
+  animation: heroScrollCue 2.2s infinite ease-in-out;
+}
+
+@keyframes heroScrollCue {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+  50% { opacity: 0.95; transform: scaleY(1); }
+}
+
+.hero__transition {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(48px, 8vh, 80px);
+  background: linear-gradient(to bottom, transparent 0%, rgba(247, 241, 229, 0.45) 50%, var(--ivory) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ==========================================================================
+   2. STORY: Two hearts, one beginning
+   ========================================================================== */
+.story { background: var(--ivory); padding-top: clamp(64px, 8vw, 96px); }
+.story__grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, .8fr); gap: clamp(54px, 8vw, 110px); align-items: center; }
+.story__portraits { width: min(100%, 520px); max-width: 520px; padding: 20px 52px 58px 0; position: relative; }
 .arched-photo { margin: 0; position: relative; overflow: hidden; background: #d8cfc2; }
 .arched-photo img { object-fit: cover; }
-.arched-photo--main { width: 100%; aspect-ratio: 4/5; border: 1px solid var(--gold); border-radius: 48% 48% 2px 2px/30% 30% 2px 2px; outline: 8px solid var(--paper); box-shadow: 0 20px 50px rgba(64,39,28,.15); }
+.arched-photo--main { width: 100%; aspect-ratio: 4/5; border: 1px solid var(--gold); border-radius: 48% 48% 2px 2px/30% 30% 2px 2px; outline: 7px solid var(--paper); box-shadow: 0 20px 48px rgba(64,39,28,.14); }
 .arched-photo--main img { object-position: 50% 43%; }
-.arched-photo--inset { width: 42%; aspect-ratio: 3/4; position: absolute; right: 0; bottom: 0; border: 8px solid var(--ivory); box-shadow: 0 16px 38px rgba(48,30,23,.18); }
+.arched-photo--inset { width: 44%; aspect-ratio: 3/4; position: absolute; right: 0; bottom: 0; border: 7px solid var(--ivory); box-shadow: 0 16px 36px rgba(48,30,23,.16); }
 .arched-photo--inset img { object-position: 53% 45%; }
-.story__copy { max-width: 520px; }
-.story__copy > p:not(.signature) { max-width: 56ch; }
-.signature { margin-top: 30px; color: var(--burgundy); font: 2.2rem var(--display); }
-.signature i { color: var(--gold); font-size: .7em; }
+.story__copy { max-width: 520px; text-align: center; }
+.story__copy .floral-divider { justify-content: center; }
+.story__copy > p:not(.signature) { max-width: 54ch; margin-inline: auto; }
+.signature { margin-top: 28px; color: var(--burgundy); font: 2.2rem var(--display); text-align: center; }
+.signature i { color: var(--gold); font-size: .7em; margin-inline: 0.1em; }
 
-.film { padding-bottom: 88px; background: var(--wine); color: #fff; }
-.film__heading { max-width: 720px; text-align: center; }
+/* ==========================================================================
+   3. FILM: A little glimpse of us
+   ========================================================================== */
+.film { padding-block: 88px; background: var(--wine); color: #fff; }
+.film__heading { max-width: 720px; text-align: center; margin-inline: auto; }
 .film__heading h2 { color: var(--ivory); }
-.film__heading p { margin-bottom: 36px; }
+.film__heading p { margin-bottom: 36px; color: #ebdcd5; }
 .film__player { text-align: center; }
-.film__frame { max-width: 1000px; padding: 6px; position: relative; border: 1px solid var(--gold); background: #220b13; box-shadow: 0 24px 70px rgba(0,0,0,.3); }
-.film__frame video { width: 100%; aspect-ratio: 16/9; display: block; object-fit: contain; background: #10070a; }
-.film__play { min-width: 112px; min-height: 44px; padding: 9px 18px; position: absolute; left: 50%; bottom: 24px; z-index: 3; transform: translateX(-50%); border: 1px solid var(--gold); background: rgba(67,21,35,.92); color: #fff; }
-.film__toggle { min-height: 44px; margin-top: 18px; padding: 8px 4px; border: 0; border-bottom: 1px solid var(--gold); background: transparent; color: var(--ivory); }
+.film__frame { max-width: 920px; padding: 6px; position: relative; border: 1px solid var(--gold); background: #220b13; box-shadow: 0 24px 70px rgba(0,0,0,.3); border-radius: 2px; }
+.film__frame video { width: 100%; aspect-ratio: 16/9; display: block; object-fit: cover; background: #10070a; border-radius: 1px; }
+.film__play { min-width: 112px; min-height: 44px; padding: 10px 20px; position: absolute; left: 50%; bottom: 24px; z-index: 3; transform: translateX(-50%); border: 1px solid var(--gold); background: rgba(67,21,35,.92); color: #fff; font-family: var(--body); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.film__toggle { min-height: 44px; margin-top: 18px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--gold); background: transparent; color: var(--ivory); font-family: var(--body); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; }
 .film__corners::before, .film__corners::after { content: '❦'; position: absolute; z-index: 2; top: -34px; color: var(--gold); font-size: 2rem; }
 .film__corners::before { left: -3px; }
 .film__corners::after { right: -3px; transform: scaleX(-1); }
 
+/* ==========================================================================
+   4. FAMILY: Our little family (Pets)
+   ========================================================================== */
 .family { padding-top: 88px; overflow: hidden; background: #eef1eb; }
 .family__grid { display: grid; grid-template-columns: .86fr 1fr; gap: clamp(52px, 8vw, 105px); align-items: center; }
 .family__copy { max-width: 530px; }
 .family__copy p:last-child { max-width: 46ch; }
-.family__art { width: min(100%, 520px); margin-inline: auto; position: relative; }
+.family__art { width: min(100%, 460px); margin-inline: auto; position: relative; }
 .family__art::before { content: ''; position: absolute; inset: 9% -7%; z-index: 0; border-radius: 50%; background: #dbe4e0; }
 .family__art img { width: 100%; height: auto; display: block; position: relative; z-index: 1; object-fit: contain; filter: drop-shadow(0 18px 28px rgba(36,75,64,.14)); }
+.family__desktop-art { display: block; }
 .family__mobile-art { display: none; }
-.pet-names { margin: 22px 0 14px; color: var(--burgundy); font: 1.8rem/1.25 var(--display); }
+.pet-names { margin: 22px 0 14px; color: var(--burgundy); font: 1.8rem/1.25 var(--display); letter-spacing: 0.04em; }
 .welcome { margin-top: 72px; padding: 34px 24px; border-block: 1px solid rgba(36,75,64,.3); text-align: center; }
 .welcome p { margin: 0; font-family: var(--display); font-size: clamp(1.3rem, 2vw, 1.7rem); }
 .welcome strong { color: var(--burgundy); font-weight: 600; }
 
+/* ==========================================================================
+   5. CELEBRATIONS: Schedule & Calendar
+   ========================================================================== */
 .celebrations { position: relative; background: var(--burgundy); color: var(--ivory); }
 .celebrations::before, .celebrations::after { content: ''; width: 5px; position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(var(--gold) 0 24px, transparent 24px 34px); }
 .celebrations::before { left: 10px; }
@@ -124,6 +407,9 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .schedule__event button { width: 54px; min-height: 44px; border: 0; background: transparent; color: #e2c28e; }
 .schedule__event button span { display: block; font-size: .58rem; text-transform: uppercase; }
 
+/* ==========================================================================
+   6. VENUE
+   ========================================================================= */
 .venue { background: var(--ivory); }
 .venue__card { min-height: 470px; display: grid; grid-template-columns: .72fr 1.28fr; border: 1px solid var(--gold); background: var(--paper); box-shadow: 0 24px 60px rgba(67,21,35,.1); }
 .venue__crest { display: grid; place-items: center; background-color: var(--green); background-image: radial-gradient(circle, rgba(247,241,229,.13) 1px, transparent 1px); background-size: 22px 22px; }
@@ -132,6 +418,9 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .venue__locality { margin: 10px 0 26px; color: var(--green); font: 1.5rem var(--display); }
 .venue__address { max-width: 48ch; margin: -12px 0 28px; color: var(--muted); line-height: 1.55; }
 
+/* ==========================================================================
+   7. CLOSING & COUNTDOWN
+   ========================================================================== */
 .closing { background: var(--green); color: var(--ivory); text-align: center; }
 .closing__content { max-width: 940px; }
 .closing .monogram { margin-bottom: 30px; }
@@ -143,71 +432,75 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .countdown small { margin-top: 8px; display: block; color: #d8e1dc; font: .62rem var(--body); letter-spacing: .14em; text-transform: uppercase; }
 .closing small { margin-top: 46px; display: block; color: #c6d3ce; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
 
-@media (max-width: 900px) {
-  .story__grid, .celebrations__intro { grid-template-columns: 1fr; }
-  .story__portraits { margin-inline: auto; }
-  .story__copy { margin-inline: auto; text-align: center; }
-  .story__copy .floral-divider { justify-content: center; }
-  .celebrations__intro { gap: 42px; }
-  .celebrations__intro > div:first-child { margin-inline: auto; text-align: center; }
-  .calendar { width: min(100%, 440px); margin-inline: auto; }
-  .schedule__day { grid-template-columns: 220px 1fr; gap: 30px; }
-  .venue__card { grid-template-columns: 1fr; }
-  .venue__crest { min-height: 220px; }
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+@media (min-width: 901px) {
+  .hero__card {
+    width: min(420px, calc(100vw - 80px));
+    max-width: 420px;
+    padding: 34px 38px 30px;
+  }
+  .hero__temple-art {
+    object-position: center 12%;
+  }
 }
 
 @media (max-width: 900px) {
   :root { --container: calc(100% - 44px); --section: 76px; }
-  body { font-size: 16px; }
   h2 { max-width: 100%; font-size: clamp(2.45rem, 10vw, 3.35rem); overflow-wrap: anywhere; }
-  .hero { min-height: 0; display: block; background: var(--wine); }
-  .hero::before { opacity: .6; }
-  .hero__stage { width: 100%; min-height: 0; padding: clamp(134px, 36vw, 158px) 0 50px; display: flex; }
-  .hero__architecture { width: 540px; pointer-events: none; }
-  .hero__card { width: auto; max-width: 540px; min-width: 0; min-height: 0; margin: 0 18px; padding: 44px 22px 38px; flex: 0 1 540px; align-self: center; box-shadow: 0 12px 30px rgba(30,10,13,.13); }
-  .hero__blessing { margin-bottom: 20px; font-size: 1.08rem; }
-  .hero h1 { margin-bottom: 23px; font-size: clamp(3.75rem, 17vw, 4.75rem); line-height: .72; white-space: normal; }
-  .hero h1 span { display: block; }
-  .hero h1 i { display: block; margin-block: 4px; font-size: .38em; line-height: 1; vertical-align: 0; }
-  .hero__message { width: 100%; max-width: 31ch; margin-bottom: 20px; overflow-wrap: normal; font-size: .96rem; line-height: 1.58; }
-  .hero__date { font-size: 1.02rem; white-space: normal; }
-  .hero__muhurtham { font-size: .84rem; white-space: normal; }
-  .hero__details { margin-bottom: 24px; }
-  .hero__action { width: 100%; min-width: 0; min-height: 46px; }
-  .story__grid { gap: 60px; }
-  .story__portraits { width: min(100%, 430px); padding: 8px 44px 58px 0; justify-self: center; }
-  .story__copy { width: 100%; min-width: 0; text-align: left; }
-  .story__copy .floral-divider { justify-content: flex-start; }
-  .film { padding-bottom: 72px; }
+
+  .story__grid, .celebrations__intro { grid-template-columns: 1fr; }
+  .story__portraits { width: min(100%, 430px); padding: 8px 44px 58px 0; justify-self: center; margin-inline: auto; }
+  .story__copy { width: 100%; min-width: 0; text-align: center; margin-inline: auto; }
+  .story__copy .floral-divider { justify-content: center; }
+
+  .film { padding-block: 72px; }
   .film__heading p { margin-bottom: 28px; }
   .film__frame { width: var(--container); padding: 4px; }
+
   .family { padding-top: 72px; }
   .family__grid { display: block; }
   .family__copy { max-width: none; text-align: center; }
   .family__desktop-art { display: none; }
-  .family__mobile-art { display: block; margin: 28px 0 24px; }
-  .family__art { width: min(100%, 300px); min-height: 1px; }
-  .pet-names { max-width: 320px; margin: 0 auto 14px; font-size: 1.55rem; }
-  .family__copy p:last-child { max-width: 31ch; margin-inline: auto; }
+  .family__mobile-art { display: block; margin: 24px auto 20px; max-width: 280px; }
+  .family__art { width: min(100%, 280px); margin-inline: auto; }
+  .pet-names { max-width: 320px; margin: 0 auto 12px; font-size: 1.55rem; }
+  .family__copy p:last-child { max-width: 32ch; margin-inline: auto; }
   .welcome { margin-top: 54px; padding: 28px 12px; }
+
+  .celebrations__intro { gap: 42px; }
+  .celebrations__intro > div:first-child { margin-inline: auto; text-align: center; }
+  .calendar { width: min(100%, 440px); margin-inline: auto; }
   .schedule__day { padding: 30px 0; grid-template-columns: 1fr; gap: 14px; }
   .schedule__day h3 { font-size: 1.7rem; }
   .schedule__event { min-height: 76px; grid-template-columns: 30px minmax(0,1fr) auto 44px; gap: 9px; }
   .schedule__event h4 { font-size: 1.25rem; line-height: 1.05; }
   .schedule__event time { max-width: 82px; white-space: normal; text-align: right; font-size: .68rem; line-height: 1.35; }
   .schedule__event button { width: 44px; }
+
+  .venue__card { grid-template-columns: 1fr; }
+  .venue__crest { min-height: 220px; }
   .venue__copy { min-width: 0; padding: 46px 24px; overflow-wrap: anywhere; }
   .venue__copy .button { width: 100%; text-align: center; }
+
   .countdown { gap: 6px; }
   .countdown span { min-width: 61px; font-size: clamp(2.2rem, 11vw, 3.2rem); }
   .closing small { line-height: 1.6; }
 }
 
 @media (max-width: 380px) {
-  :root { --container: calc(100% - 40px); }
-  .hero__card { margin-inline: 16px; padding-inline: 20px; }
-  .hero h1 { font-size: 3.65rem; }
-  .hero__message { font-size: .94rem; }
+  :root { --container: calc(100% - 32px); }
+  .hero__card {
+    width: calc(100vw - 32px);
+    padding: 18px 16px 16px;
+  }
+  .hero__name { font-size: 2.5rem; }
+  .hero__invitation-text { font-size: 0.82rem; }
+  .hero__date { font-size: 1.05rem; }
+  .hero__muhurtham { font-size: 0.74rem; }
+  .hero__action { padding: 9px 18px; font-size: 0.78rem; width: 100%; }
+
   .schedule__event { grid-template-columns: 25px minmax(0,1fr) auto 42px; }
   .schedule__event h4 { font-size: 1.12rem; }
   .schedule__event time { font-size: .62rem; }
@@ -216,6 +509,11 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 }
 
 @media (max-width: 340px) {
+  .hero__card {
+    width: calc(100vw - 24px);
+    padding: 16px 12px 14px;
+  }
+  .hero__name { font-size: 2.3rem; }
   .story__portraits { width: min(100%, 320px); padding: 0; display: grid; gap: 16px; }
   .arched-photo--inset { width: 42%; min-width: 118px; position: relative; right: auto; bottom: auto; justify-self: end; margin-top: -54px; }
   .story__grid { gap: 42px; }
@@ -223,5 +521,9 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
