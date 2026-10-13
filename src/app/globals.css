@@ -429,9 +429,140 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .family__desktop-art { display: block; }
 .family__mobile-art { display: none; }
 .pet-names { margin: 22px 0 14px; color: var(--burgundy); font: 1.8rem/1.25 var(--display); letter-spacing: 0.04em; }
-.welcome { margin-top: 72px; padding: 34px 24px; border-block: 1px solid rgba(36,75,64,.3); text-align: center; }
-.welcome p { margin: 0; font-family: var(--display); font-size: clamp(1.3rem, 2vw, 1.7rem); }
+.welcome { margin-top: 72px; padding: 34px 24px; border-block: 1px solid rgba(36,75,64,.25); text-align: center; }
+.welcome p { margin: 0; font-family: var(--display); font-size: clamp(1.2rem, 2.1vw, 1.6rem); line-height: 1.5; color: var(--charcoal); text-wrap: balance; }
 .welcome strong { color: var(--burgundy); font-weight: 600; }
+.welcome__relation { font-family: var(--body); font-size: 0.82em; font-weight: 400; color: var(--muted); letter-spacing: 0.02em; }
+
+/* ==========================================================================
+   4B. BROTHER NOTE: A heartfelt personal note from Sheshu (Groom's Brother)
+   ========================================================================== */
+.brother-note {
+  background: var(--paper);
+  border-top: 1px solid rgba(173, 134, 72, 0.22);
+  border-bottom: 1px solid rgba(173, 134, 72, 0.22);
+  position: relative;
+  overflow: hidden;
+}
+
+.brother-note::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 50% 25%, rgba(173, 134, 72, 0.06) 0%, transparent 72%);
+  pointer-events: none;
+}
+
+.brother-note__card {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+  padding: clamp(40px, 5.5vw, 64px) clamp(24px, 4vw, 44px);
+  position: relative;
+}
+
+.brother-note .floral-divider {
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: var(--gold);
+}
+
+.brother-note__eyebrow {
+  margin-bottom: 14px;
+  color: var(--gold);
+  font-family: var(--body);
+  font-size: clamp(0.74rem, 1.1vw, 0.82rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.brother-note__header {
+  margin-bottom: 24px;
+}
+
+.brother-note__name {
+  margin: 0 0 6px;
+  color: var(--burgundy);
+  font-family: var(--display);
+  font-size: clamp(2.3rem, 4.5vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+}
+
+.brother-note__relation {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--body);
+  font-size: clamp(0.8rem, 1.2vw, 0.88rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.brother-note__body {
+  max-width: 52ch;
+  margin-inline: auto;
+  margin-bottom: 28px;
+}
+
+.brother-note__message {
+  margin: 0;
+  color: var(--charcoal);
+  font-family: var(--display);
+  font-size: clamp(1.2rem, 2.3vw, 1.55rem);
+  font-style: italic;
+  line-height: 1.65;
+  letter-spacing: 0.005em;
+  text-wrap: pretty;
+}
+
+.brother-note__closing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--gold);
+  font-size: 1.1rem;
+}
+
+.brother-note__closing-line {
+  width: 44px;
+  height: 1px;
+  background: rgba(173, 134, 72, 0.35);
+}
+
+.brother-note__closing-motif {
+  color: var(--gold);
+  line-height: 1;
+}
+
+/* Subtle stagger when revealed (single trigger IntersectionObserver) */
+.brother-note__card[data-reveal]:not(.is-revealed) .brother-note__header,
+.brother-note__card[data-reveal]:not(.is-revealed) .brother-note__body,
+.brother-note__card[data-reveal]:not(.is-revealed) .brother-note__closing {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.brother-note__card[data-reveal].is-revealed .brother-note__header {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 650ms ease 90ms, transform 650ms ease 90ms;
+}
+
+.brother-note__card[data-reveal].is-revealed .brother-note__body {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 650ms ease 160ms, transform 650ms ease 160ms;
+}
+
+.brother-note__card[data-reveal].is-revealed .brother-note__closing {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 650ms ease 230ms, transform 650ms ease 230ms;
+}
 
 /* ==========================================================================
    5. CELEBRATIONS: Schedule & Calendar
@@ -589,9 +720,16 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
   .family__art { width: min(100%, 280px); margin-inline: auto; }
   .pet-names { max-width: 320px; margin: 0 auto 12px; font-size: 1.55rem; }
   .family__copy p:last-child { max-width: 32ch; margin-inline: auto; }
-  .welcome { margin-top: 54px; padding: 28px 12px; }
+  .welcome { margin-top: 54px; padding: 26px 14px; }
+  .welcome p { font-size: 1.18rem; }
+  .welcome__relation { display: inline-block; margin-top: 2px; }
 
-  .celebrations__intro { gap: 42px; }
+  .brother-note { padding-block: 56px; }
+  .brother-note__card { padding: 28px 12px; }
+  .brother-note__name { font-size: clamp(2rem, 7.5vw, 2.7rem); }
+  .brother-note__body { margin-bottom: 22px; }
+  .brother-note__message { font-size: clamp(1.15rem, 4.4vw, 1.35rem); line-height: 1.6; }
+
   .celebrations__intro > div:first-child { margin-inline: auto; text-align: center; }
   .calendar { width: min(100%, 440px); margin-inline: auto; }
 

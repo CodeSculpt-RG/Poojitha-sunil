@@ -20,7 +20,17 @@ export const invitation = {
     address: "6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
     fullAddress: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
   },
-  brother: "Sheshu Sai",
+  family: {
+    groomBrother: {
+      name: "Sheshu",
+      relation: "Groom's Brother",
+      note: "Watching my brother begin this beautiful new chapter is a moment I will always cherish. Sunil and Pooja, may your life together be filled with endless happiness, laughter, love, and memories that grow more beautiful with every passing year. So happy to celebrate this special day with both of you.",
+    },
+    brideBrother: {
+      name: "Sai",
+      relation: "Bride's Brother",
+    },
+  },
   pets: ["Mummble", "Max"],
   assets: {
     templeFacade: "/media/temple-facade.jpg",

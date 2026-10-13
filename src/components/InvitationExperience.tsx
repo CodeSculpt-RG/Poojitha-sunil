@@ -160,6 +160,45 @@ function PetSticker() {
   );
 }
 
+function BrotherNote() {
+  const { groomBrother } = invitation.family;
+
+  return (
+    <section
+      className="brother-note section"
+      id="brother-note"
+      aria-labelledby="brother-note-title"
+    >
+      <div className="container brother-note__card" data-reveal>
+        <div className="brother-note__ornament" aria-hidden="true">
+          <FloralDivider />
+        </div>
+
+        <p className="brother-note__eyebrow">A note from the Groom&apos;s Brother</p>
+
+        <div className="brother-note__header">
+          <h2 id="brother-note-title" className="brother-note__name">
+            {groomBrother.name}
+          </h2>
+          <p className="brother-note__relation">{groomBrother.relation}</p>
+        </div>
+
+        <div className="brother-note__body">
+          <p className="brother-note__message">
+            &ldquo;{groomBrother.note}&rdquo;
+          </p>
+        </div>
+
+        <div className="brother-note__closing" aria-hidden="true">
+          <span className="brother-note__closing-line" />
+          <span className="brother-note__closing-motif">❦</span>
+          <span className="brother-note__closing-line" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function CalendarOverview() {
   return (
     <div className="calendar" data-reveal aria-label="December 2026 calendar with wedding dates highlighted">
@@ -623,10 +662,15 @@ export function InvitationExperience() {
         </div>
         <div className="container welcome" data-reveal>
           <p>
-            With love from <strong>{invitation.brother}</strong>, the groom’s brother.
+            With love and blessings from <strong>{invitation.family.groomBrother.name}</strong>{" "}
+            <span className="welcome__relation">({invitation.family.groomBrother.relation})</span>{" "}
+            and <strong>{invitation.family.brideBrother.name}</strong>{" "}
+            <span className="welcome__relation">({invitation.family.brideBrother.relation})</span>.
           </p>
         </div>
       </section>
+
+      <BrotherNote />
 
       <section
         className="celebrations section"
