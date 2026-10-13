@@ -26,14 +26,74 @@ img { max-width: 100%; }
 .section { padding-block: var(--section); }
 h1, h2, h3, h4, p { margin-top: 0; }
 h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6rem)/.92 var(--display); letter-spacing: -.045em; text-wrap: balance; }
-.button { min-height: 48px; border: 1px solid var(--gold); padding: 11px 22px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--burgundy); color: #fff; text-decoration: none; }
-.button--ivory { background: var(--ivory); color: var(--wine); }
+
+.button {
+  min-height: 48px;
+  border: 1px solid var(--gold);
+  padding: 11px 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--burgundy);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 2px;
+  font-family: var(--body);
+  font-size: 0.86rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.button:hover {
+  transform: translateY(-1px);
+}
+.button:active {
+  transform: scale(0.98);
+}
+.button--ivory {
+  background: var(--ivory);
+  color: var(--wine);
+  border-color: rgba(173, 134, 72, 0.6);
+}
+.button--ivory:hover {
+  background: #fff;
+  border-color: var(--gold);
+}
+.button--gold-subtle {
+  background: transparent;
+  border: 1px solid rgba(228, 195, 139, 0.7);
+  color: var(--ivory);
+}
+.button--gold-subtle:hover {
+  background: rgba(228, 195, 139, 0.15);
+  border-color: #e4c38b;
+}
+
 :focus-visible { outline: 3px solid #efc978; outline-offset: 4px; }
 .floral-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: var(--gold); }
 .floral-divider i { width: 64px; border-top: 1px solid currentColor; }
 .monogram { width: 112px; height: 112px; border: 1px solid var(--gold); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; position: relative; background: var(--ivory); color: var(--gold); font: 2.9rem var(--display); }
 .monogram::after { content: ''; position: absolute; inset: 6px; border: 1px solid currentColor; border-radius: 50%; opacity: .55; }
 .monogram i { margin: 0 -2px; font-size: 1.2rem; }
+
+/* ==========================================================================
+   REVEAL SYSTEM: High-performance, single-trigger, compositor-friendly
+   ========================================================================== */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 750ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 750ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* ==========================================================================
    1. HERO: Ceremonial Temple Frame & Invitation Card
@@ -262,7 +322,7 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
   text-transform: uppercase;
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(103, 28, 45, 0.28);
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -274,7 +334,7 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 }
 
 .hero__action:active {
-  transform: translateY(1px);
+  transform: scale(0.98);
   box-shadow: 0 2px 6px rgba(103, 28, 45, 0.2);
 }
 
@@ -347,8 +407,11 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .film__player { text-align: center; }
 .film__frame { max-width: 920px; padding: 6px; position: relative; border: 1px solid var(--gold); background: #220b13; box-shadow: 0 24px 70px rgba(0,0,0,.3); border-radius: 2px; }
 .film__frame video { width: 100%; aspect-ratio: 16/9; display: block; object-fit: cover; background: #10070a; border-radius: 1px; }
-.film__play { min-width: 112px; min-height: 44px; padding: 10px 20px; position: absolute; left: 50%; bottom: 24px; z-index: 3; transform: translateX(-50%); border: 1px solid var(--gold); background: rgba(67,21,35,.92); color: #fff; font-family: var(--body); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
-.film__toggle { min-height: 44px; margin-top: 18px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--gold); background: transparent; color: var(--ivory); font-family: var(--body); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.film__play { min-width: 112px; min-height: 44px; padding: 10px 20px; position: absolute; left: 50%; bottom: 24px; z-index: 3; transform: translateX(-50%); border: 1px solid var(--gold); background: rgba(67,21,35,.92); color: #fff; font-family: var(--body); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; transition: background-color 0.2s ease, transform 0.15s ease; }
+.film__play:hover { background: var(--burgundy); transform: translateX(-50%) translateY(-1px); }
+.film__play:active { transform: translateX(-50%) scale(0.98); }
+.film__toggle { min-height: 44px; margin-top: 18px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--gold); background: transparent; color: var(--ivory); font-family: var(--body); font-size: 0.82rem; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s ease, border-color 0.2s ease; }
+.film__toggle:hover { color: #fff; border-color: #fff; }
 .film__corners::before, .film__corners::after { content: '❦'; position: absolute; z-index: 2; top: -34px; color: var(--gold); font-size: 2rem; }
 .film__corners::before { left: -3px; }
 .film__corners::after { right: -3px; transform: scaleX(-1); }
@@ -360,7 +423,7 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .family__grid { display: grid; grid-template-columns: .86fr 1fr; gap: clamp(52px, 8vw, 105px); align-items: center; }
 .family__copy { max-width: 530px; }
 .family__copy p:last-child { max-width: 46ch; }
-.family__art { width: min(100%, 460px); margin-inline: auto; position: relative; }
+.family__art { width: min(100%, 420px); aspect-ratio: 1; margin-inline: auto; position: relative; }
 .family__art::before { content: ''; position: absolute; inset: 9% -7%; z-index: 0; border-radius: 50%; background: #dbe4e0; }
 .family__art img { width: 100%; height: auto; display: block; position: relative; z-index: 1; object-fit: contain; filter: drop-shadow(0 18px 28px rgba(36,75,64,.14)); }
 .family__desktop-art { display: block; }
@@ -389,23 +452,61 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
 .calendar__days span { aspect-ratio: 1; display: grid; place-items: center; position: relative; font-size: .78rem; }
 .calendar__days .is-wedding-day { border-radius: 50%; background: var(--burgundy); color: #fff; }
 .calendar__days .day-13 { background: var(--green); box-shadow: 0 0 0 3px var(--ivory), 0 0 0 4px var(--gold); }
-.calendar > p { margin: 18px 0 0; display: flex; align-items: center; gap: 7px; font-size: .7rem; }
+.calendar > p { margin: 18px 0 0; display: flex; align-items: center; gap: 7px; font-size: .72rem; }
 .calendar > p i, .calendar > p b { width: 10px; height: 10px; border-radius: 50%; background: var(--burgundy); }
 .calendar > p b { margin-left: 10px; background: var(--green); }
+
 .schedule { border-top: 1px solid rgba(247,241,229,.28); }
 .schedule__day { padding: 38px 0; display: grid; grid-template-columns: 280px 1fr; gap: 60px; border-bottom: 1px solid rgba(247,241,229,.28); }
-.schedule__day header p { margin: 0 0 4px; color: #e2c28e; font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; }
+.schedule__day header p { margin: 0 0 4px; color: #e2c28e; font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; }
 .schedule__day h3 { font: 500 2rem/1.05 var(--display); }
-.schedule__event { min-height: 68px; display: grid; grid-template-columns: 38px minmax(0,1fr) auto 58px; gap: 16px; align-items: center; border-bottom: 1px dotted rgba(247,241,229,.24); }
-.schedule__event:last-child { border: 0; }
-.schedule__event--muhurtham { margin-top: 8px; padding-inline: 12px; border: 1px solid rgba(226,194,142,.45); background: rgba(36,75,64,.65); }
-.schedule__symbol { color: #e2c28e; font-size: 1.25rem; text-align: center; }
-.schedule__event h4 { margin: 0; font: 500 1.5rem var(--display); }
-.schedule__event p { margin: 2px 0 0; color: #e3d5cc; font-size: .75rem; }
-.schedule__event time { font-size: .78rem; font-weight: 600; white-space: nowrap; }
-.schedule__event time small { font-size: .62rem; }
-.schedule__event button { width: 54px; min-height: 44px; border: 0; background: transparent; color: #e2c28e; }
-.schedule__event button span { display: block; font-size: .58rem; text-transform: uppercase; }
+
+.schedule__events { display: flex; flex-direction: column; gap: 0; }
+.schedule__event {
+  min-height: 72px;
+  padding: 14px 0;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  border-bottom: 1px dotted rgba(247,241,229,.22);
+}
+.schedule__event:last-child { border-bottom: 0; }
+.schedule__event--muhurtham {
+  margin-top: 10px;
+  padding: 16px 18px;
+  border: 1px solid rgba(226,194,142,.5);
+  background: rgba(36,75,64,.65);
+  border-radius: 2px;
+}
+.schedule__symbol { color: #e2c28e; font-size: 1.3rem; text-align: center; line-height: 1; }
+.schedule__details h4 { margin: 0; font: 500 1.55rem var(--display); letter-spacing: -0.01em; color: var(--ivory); }
+.schedule__details p { margin: 4px 0 0; color: #ded1c7; font-size: 0.82rem; line-height: 1.45; }
+.schedule__time {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #e2c28e;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.schedule__time small { font-size: 0.64rem; letter-spacing: 0.08em; margin-left: 2px; }
+
+.schedule__footer {
+  margin-top: 44px;
+  display: flex;
+  justify-content: center;
+}
+.schedule__calendar-action {
+  min-height: 48px;
+  padding: 12px 28px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22);
+}
 
 /* ==========================================================================
    6. VENUE
@@ -423,13 +524,34 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
    ========================================================================== */
 .closing { background: var(--green); color: var(--ivory); text-align: center; }
 .closing__content { max-width: 940px; }
-.closing .monogram { margin-bottom: 30px; }
+.closing .monogram { margin-bottom: 24px; }
+.closing__blessing {
+  margin: 0 0 16px;
+  color: #e4c38b;
+  font-family: var(--display);
+  font-style: italic;
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  letter-spacing: 0.04em;
+}
 .closing h2 { margin-bottom: 18px; color: var(--ivory); font-size: clamp(3.8rem, 8vw, 7.5rem); }
 .closing h2 i { color: var(--gold); font-size: .4em; }
 .closing__date { margin: 28px 0 0; color: #e4c38b; font-weight: 600; }
 .countdown { margin: 38px 0; display: flex; justify-content: center; gap: clamp(12px, 4vw, 50px); }
-.countdown span { min-width: 74px; color: var(--ivory); font: clamp(3rem, 7vw, 5.6rem)/1 var(--display); }
+.countdown span {
+  min-width: 74px;
+  color: var(--ivory);
+  font: clamp(3rem, 7vw, 5.6rem)/1 var(--display);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
 .countdown small { margin-top: 8px; display: block; color: #d8e1dc; font: .62rem var(--body); letter-spacing: .14em; text-transform: uppercase; }
+.closing__actions {
+  margin-top: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+}
 .closing small { margin-top: 46px; display: block; color: #c6d3ce; font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; }
 
 /* ==========================================================================
@@ -472,12 +594,18 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
   .celebrations__intro { gap: 42px; }
   .celebrations__intro > div:first-child { margin-inline: auto; text-align: center; }
   .calendar { width: min(100%, 440px); margin-inline: auto; }
+
   .schedule__day { padding: 30px 0; grid-template-columns: 1fr; gap: 14px; }
   .schedule__day h3 { font-size: 1.7rem; }
-  .schedule__event { min-height: 76px; grid-template-columns: 30px minmax(0,1fr) auto 44px; gap: 9px; }
-  .schedule__event h4 { font-size: 1.25rem; line-height: 1.05; }
-  .schedule__event time { max-width: 82px; white-space: normal; text-align: right; font-size: .68rem; line-height: 1.35; }
-  .schedule__event button { width: 44px; }
+  .schedule__event {
+    min-height: 68px;
+    padding: 12px 0;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 12px;
+  }
+  .schedule__details h4 { font-size: 1.3rem; }
+  .schedule__details p { font-size: 0.78rem; line-height: 1.4; }
+  .schedule__time { font-size: 0.76rem; }
 
   .venue__card { grid-template-columns: 1fr; }
   .venue__crest { min-height: 220px; }
@@ -501,9 +629,14 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
   .hero__muhurtham { font-size: 0.74rem; }
   .hero__action { padding: 9px 18px; font-size: 0.78rem; width: 100%; }
 
-  .schedule__event { grid-template-columns: 25px minmax(0,1fr) auto 42px; }
-  .schedule__event h4 { font-size: 1.12rem; }
-  .schedule__event time { font-size: .62rem; }
+  .schedule__event {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+  .schedule__details h4 { font-size: 1.15rem; }
+  .schedule__details p { font-size: 0.74rem; }
+  .schedule__time { font-size: 0.7rem; }
+
   .countdown span { min-width: 54px; }
   .calendar { padding: 22px; }
 }
@@ -525,5 +658,10 @@ h2 { margin-bottom: 24px; color: var(--burgundy); font: 500 clamp(3rem, 6vw, 5.6
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
   }
 }

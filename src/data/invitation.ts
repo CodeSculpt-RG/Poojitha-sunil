@@ -2,6 +2,7 @@ export type WeddingEvent = {
   id: string;
   date: "2026-12-11" | "2026-12-12" | "2026-12-13";
   label: string;
+  description?: string;
   start: string;
   end?: string;
   venue?: string;
@@ -29,18 +30,66 @@ export const invitation = {
     petSticker: "/media/max-mummble.jpeg",
   },
   events: [
-    { id: "rata", date: "2026-12-11", label: "Rata", start: "07:30", end: "08:30" },
-    { id: "pelli", date: "2026-12-11", label: "Pelli Kuturu & Pelli Koduku", start: "09:00" },
-    { id: "pradanam", date: "2026-12-12", label: "Pradanam", start: "08:00" },
-    { id: "haldi", date: "2026-12-12", label: "Haldi", start: "14:30", featured: true },
-    { id: "barat", date: "2026-12-12", label: "Barat", start: "18:00", featured: true },
-    { id: "reception", date: "2026-12-12", label: "Reception", start: "19:30", featured: true },
-    { id: "muhurtham", date: "2026-12-13", label: "Muhurtham", start: "04:05", venue: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011", featured: true },
+    {
+      id: "rata",
+      date: "2026-12-11",
+      label: "Rata Snanamu",
+      description: "Sacred commencement and morning ritual marking the beginning of festivities.",
+      start: "07:30",
+      end: "08:30",
+    },
+    {
+      id: "pelli",
+      date: "2026-12-11",
+      label: "Pellikuthuru & Pellikoduku",
+      description: "Ceremonial blessings and traditional adorning of the bride and groom.",
+      start: "09:00",
+    },
+    {
+      id: "pradanam",
+      date: "2026-12-12",
+      label: "Pradanamu",
+      description: "The sacred engagement and formal exchange of wedding auspiciousness.",
+      start: "08:00",
+    },
+    {
+      id: "haldi",
+      date: "2026-12-12",
+      label: "Mangala Snanamu",
+      description: "Traditional turmeric ceremony and joyful celebrations with family.",
+      start: "14:30",
+      featured: true,
+    },
+    {
+      id: "barat",
+      date: "2026-12-12",
+      label: "Edurukolu",
+      description: "Grand celebratory procession and warm traditional welcoming of the groom.",
+      start: "18:00",
+      featured: true,
+    },
+    {
+      id: "reception",
+      date: "2026-12-12",
+      label: "Sangeetham & Reception",
+      description: "An evening of music, dinner, and togetherness with family and friends.",
+      start: "19:30",
+      featured: true,
+    },
+    {
+      id: "muhurtham",
+      date: "2026-12-13",
+      label: "Sumuhurthamu",
+      description: "Jeelakarra Bellam & Mangalyadharana in the auspicious Brahma Muhurtham.",
+      start: "04:05",
+      venue: "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
+      featured: true,
+    },
   ] satisfies WeddingEvent[],
 } as const;
 
 export const dateChapters = [
-  { date: "2026-12-11", eyebrow: "Friday", title: "The festivities begin" },
-  { date: "2026-12-12", eyebrow: "Saturday", title: "A day of celebration" },
-  { date: "2026-12-13", eyebrow: "Sunday · early morning", title: "The sacred hour" },
+  { date: "2026-12-11", eyebrow: "Friday · Shukravaramu", title: "The festivities begin" },
+  { date: "2026-12-12", eyebrow: "Saturday · Shanivaramu", title: "A day of celebration" },
+  { date: "2026-12-13", eyebrow: "Sunday · Adivaramu", title: "The sacred hour" },
 ] as const;
