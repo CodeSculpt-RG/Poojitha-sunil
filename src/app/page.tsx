@@ -1,3 +1,5 @@
 import { InvitationExperience } from "@/components/InvitationExperience";
 
-export default function Home() { return <InvitationExperience />; }
+export default function Home() {
+  return <InvitationExperience />;
+}

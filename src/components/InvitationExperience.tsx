@@ -1,9 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
+import { useEffect, useRef, useState } from "react";
 import { dateChapters, invitation, type WeddingEvent } from "@/data/invitation";
 import { FloralDivider, Monogram } from "./Ornaments";
 
@@ -14,7 +12,23 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
   timeZone: invitation.timezone,
 });
 
-const eventDate = (event: WeddingEvent, time = event.start) =>
+const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
+const COUNTDOWN_UNITS = ["days", "hours", "minutes", "seconds"];
+const EVENT_SYMBOLS: Record<string, string> = {
+  rata: "✦",
+  pelli: "❧",
+  pradanam: "◇",
+  haldi: "☼",
+  barat: "♘",
+  reception: "✧",
+  muhurtham: "❋",
+};
+const schedule = dateChapters.map((chapter) => ({
+  ...chapter,
+  events: invitation.events.filter((event) => event.date === chapter.date),
+}));
+
+const toEventDate = (event: WeddingEvent, time = event.start) =>
   new Date(`${event.date}T${time}:00+05:30`);
 
 const formatTime = (event: WeddingEvent) => {
@@ -24,19 +38,21 @@ const formatTime = (event: WeddingEvent) => {
       minute: "2-digit",
       hour12: true,
       timeZone: invitation.timezone,
-    }).format(eventDate(event, time));
-  return event.end ? `${format(event.start)}–${format(event.end)}` : format(event.start);
+    }).format(toEventDate(event, time));
+  return event.end
+    ? `${format(event.start)}–${format(event.end)}`
+    : format(event.start);
 };
 
-function makeFullCalendarICS(events: readonly WeddingEvent[]) {
+function buildCalendar(events: readonly WeddingEvent[]) {
   const clean = (value: string) => value.replace(/[-:]/g, "");
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Sunil & Pooja//Wedding Celebrations//EN",
+    "PRODID:-//Sunil & Poojitha//Wedding Celebrations//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:Sunil & Pooja Wedding Celebrations",
+    "X-WR-CALNAME:Sunil & Poojitha Wedding Celebrations",
     "X-WR-TIMEZONE:Asia/Kolkata",
   ];
 
@@ -47,14 +63,14 @@ function makeFullCalendarICS(events: readonly WeddingEvent[]) {
       : `${clean(event.date)}T${clean(event.start)}00`;
     lines.push(
       "BEGIN:VEVENT",
-      `UID:${event.id}@sunil-pooja-wedding-celebrations`,
+      `UID:${event.id}@sunil-poojitha-wedding-celebrations`,
       `DTSTART;TZID=Asia/Kolkata:${start}`,
       `DTEND;TZID=Asia/Kolkata:${end}`,
-      `SUMMARY:${event.label} — Sunil & Pooja Wedding`,
+      `SUMMARY:${event.label} — Sunil & Poojitha Wedding`,
       `LOCATION:${event.venue || invitation.venue.fullAddress}`,
       `DESCRIPTION:${event.description || event.label}. All timings are in India Standard Time (IST).`,
       "STATUS:CONFIRMED",
-      "END:VEVENT"
+      "END:VEVENT",
     );
   });
 
@@ -62,82 +78,112 @@ function makeFullCalendarICS(events: readonly WeddingEvent[]) {
   return lines.join("\r\n");
 }
 
-function downloadFullCalendar() {
-  const blob = new Blob([makeFullCalendarICS(invitation.events)], {
+function downloadCalendar() {
+  const blob = new Blob([buildCalendar(invitation.events)], {
     type: "text/calendar;charset=utf-8",
   });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "sunil-pooja-wedding-celebrations.ics";
+  anchor.download = "sunil-poojitha-wedding-celebrations.ics";
+  anchor.hidden = true;
+  document.body.appendChild(anchor);
   anchor.click();
-  URL.revokeObjectURL(url);
+  anchor.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function copyInvitation(text: string) {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const copied = document.execCommand("copy");
+  textarea.remove();
+  if (!copied) throw new Error("Clipboard unavailable");
 }
 
 function HeroInvitation() {
   const onContinue = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const target = document.getElementById("story");
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    document
+      .getElementById("story")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   return (
-    <section className="hero" id="invitation" aria-labelledby="invitation-title">
+    <section
+      className="hero"
+      id="invitation"
+      aria-labelledby="invitation-title"
+    >
       <div className="hero__frame" aria-hidden="true">
-        <Image
-          className="hero__temple-art"
-          src={invitation.assets.templeFacade}
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-        />
-        <div className="hero__ambient" />
       </div>
 
       <div className="hero__container">
         <div className="hero__card">
           <div className="hero__blessing-wrap">
+            <svg
+              className="hero__ganesha"
+              viewBox="0 0 64 64"
+              aria-hidden="true"
+            >
+              <path d="M33 8c-4 0-7 3-7 7 0 3 2 5 5 6m-6-4c-7 0-12 5-12 12 0 6 4 10 9 10 4 0 7-2 8-5m9-17c7 0 12 5 12 12 0 6-4 10-9 10m-10-18c5 0 8 3 8 8 0 9-12 10-12 18 0 5 4 8 8 8 5 0 8-4 8-9m-29-19c-3-1-6 1-6 4 0 4 4 6 8 4m34-8c3-1 6 1 6 4 0 4-4 6-8 4M32 8V3m-4 4 4-4 4 4" />
+            </svg>
             <p className="hero__blessing">With the blessings of Lord Ganesha</p>
             <div className="hero__blessing-divider" aria-hidden="true">
               <span />
-              <i>❖</i>
+              <i />
               <span />
             </div>
           </div>
 
+          <p className="hero__eyebrow">You are invited to</p>
+
           <h1 id="invitation-title" className="hero__names">
-            <span className="hero__name hero__name--first">{invitation.couple.first}</span>
-            <span className="hero__ampersand" aria-hidden="true">&amp;</span>
-            <span className="hero__name hero__name--second">{invitation.couple.second}</span>
+            <span className="hero__name hero__name--first">
+              {invitation.couple.first}
+            </span>
+            <span className="hero__ampersand" aria-hidden="true">
+              &amp;
+            </span>
+            <span className="hero__name hero__name--second">
+              Poojitha
+            </span>
           </h1>
+
+          <div className="hero__lotus-rule" aria-hidden="true">
+            <span />
+            <i>♧</i>
+            <span />
+          </div>
 
           <p className="hero__invitation-text">
             Together with our families, we invite you to celebrate our wedding.
           </p>
-
-          <div className="hero__meta">
-            <p className="hero__date">{invitation.dateLine}</p>
-            <p className="hero__muhurtham">Sumuhurthamu · 13 December, 4:05 AM IST</p>
-          </div>
 
           <div className="hero__action-wrap">
             <a
               className="hero__action"
               href="#story"
               onClick={onContinue}
-              aria-label="View celebrations, continue to wedding story"
+              aria-label="View invitation, continue to wedding story"
             >
-              <span>View celebrations</span>
-              <span className="hero__action-icon" aria-hidden="true">↓</span>
+              <span>View Invitation</span>
+              <span className="hero__action-icon" aria-hidden="true">
+                →
+              </span>
             </a>
           </div>
-        </div>
-
-        <div className="hero__scroll-cue" aria-hidden="true">
-          <span className="hero__scroll-line" />
         </div>
       </div>
 
@@ -174,7 +220,9 @@ function BrotherNote() {
           <FloralDivider />
         </div>
 
-        <p className="brother-note__eyebrow">A note from the Groom&apos;s Brother</p>
+        <p className="brother-note__eyebrow">
+          A note from the Groom&apos;s Brother
+        </p>
 
         <div className="brother-note__header">
           <h2 id="brother-note-title" className="brother-note__name">
@@ -201,13 +249,17 @@ function BrotherNote() {
 
 function CalendarOverview() {
   return (
-    <div className="calendar" data-reveal aria-label="December 2026 calendar with wedding dates highlighted">
+    <div
+      className="calendar"
+      data-reveal
+      aria-label="December 2026 calendar with wedding dates highlighted"
+    >
       <div className="calendar__heading">
         <span>December</span>
         <strong>2026</strong>
       </div>
       <div className="calendar__weekdays" aria-hidden="true">
-        {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+        {WEEKDAYS.map((day, index) => (
           <span key={`${day}-${index}`}>{day}</span>
         ))}
       </div>
@@ -216,7 +268,10 @@ function CalendarOverview() {
           const day = index - 1;
           const selected = day >= 11 && day <= 13;
           return (
-            <span className={selected ? `is-wedding-day day-${day}` : ""} key={index}>
+            <span
+              className={selected ? `is-wedding-day day-${day}` : ""}
+              key={index}
+            >
               {day > 0 && day <= 31 ? day : ""}
             </span>
           );
@@ -230,29 +285,14 @@ function CalendarOverview() {
 }
 
 function Schedule() {
-  const groups = useMemo(
-    () =>
-      dateChapters.map((chapter) => ({
-        ...chapter,
-        events: invitation.events.filter((event) => event.date === chapter.date),
-      })),
-    []
-  );
-
-  const symbols: Record<string, string> = {
-    rata: "✦",
-    pelli: "❧",
-    pradanam: "◇",
-    haldi: "☼",
-    barat: "♘",
-    reception: "✧",
-    muhurtham: "❋",
-  };
-
   return (
     <div className="schedule" data-reveal>
-      {groups.map((group) => (
-        <section className="schedule__day" key={group.date} aria-labelledby={`date-${group.date}`}>
+      {schedule.map((group) => (
+        <section
+          className="schedule__day"
+          key={group.date}
+          aria-labelledby={`date-${group.date}`}
+        >
           <header>
             <p>{group.eyebrow}</p>
             <h3 id={`date-${group.date}`}>
@@ -268,7 +308,7 @@ function Schedule() {
                 key={event.id}
               >
                 <span className="schedule__symbol" aria-hidden="true">
-                  {symbols[event.id]}
+                  {EVENT_SYMBOLS[event.id]}
                 </span>
                 <div className="schedule__details">
                   <h4>{event.label}</h4>
@@ -289,7 +329,7 @@ function Schedule() {
         <button
           className="button button--ivory schedule__calendar-action"
           type="button"
-          onClick={downloadFullCalendar}
+          onClick={downloadCalendar}
         >
           <span aria-hidden="true">📅</span>
           <span>Save schedule to calendar</span>
@@ -305,7 +345,7 @@ function Countdown() {
   useEffect(() => {
     const tick = () =>
       setRemaining(
-        Math.max(0, new Date(invitation.muhurthamISO).getTime() - Date.now())
+        Math.max(0, new Date(invitation.muhurthamISO).getTime() - Date.now()),
       );
     tick();
     const id = window.setInterval(tick, 1000);
@@ -327,7 +367,7 @@ function Countdown() {
 
   return (
     <div className="countdown" aria-label="Countdown to the sumuhurthamu">
-      {["days", "hours", "minutes", "seconds"].map((label, index) => (
+      {COUNTDOWN_UNITS.map((label, index) => (
         <span key={label}>
           {values ? String(values[index]).padStart(2, "0") : "—"}
           <small>{label}</small>
@@ -387,11 +427,12 @@ function CoupleFilm() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        isVisible.current = entry.isIntersecting && entry.intersectionRatio >= 0.35;
+        isVisible.current =
+          entry.isIntersecting && entry.intersectionRatio >= 0.35;
         if (isVisible.current) void tryPlay();
         else video.pause();
       },
-      { threshold: [0, 0.35, 0.75] }
+      { threshold: [0, 0.35, 0.75] },
     );
 
     const onVisibilityChange = () => {
@@ -473,86 +514,10 @@ function CoupleFilm() {
 export function InvitationExperience() {
   const main = useRef<HTMLElement>(null);
   const [shareLabel, setShareLabel] = useState("Share invitation");
+  const [calendarLabel, setCalendarLabel] = useState("Save to calendar");
+  const shareTimer = useRef<number | null>(null);
+  const calendarTimer = useRef<number | null>(null);
 
-  // Hero Opening Choreography (Runs once on mount for 1.4s, clears inline styles when done)
-  useGSAP(
-    () => {
-      if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-      const tl = gsap.timeline({
-        defaults: { ease: "power2.out" },
-        onComplete: () => {
-          gsap.set(
-            ".hero__temple-art, .hero__card, .hero__blessing-wrap, .hero__name--first, .hero__ampersand, .hero__name--second, .hero__invitation-text, .hero__meta, .hero__action-wrap, .hero__scroll-cue",
-            { clearProps: "transform,opacity" }
-          );
-        },
-      });
-
-      tl.fromTo(
-        ".hero__temple-art",
-        { opacity: 0.7, scale: 1.02 },
-        { opacity: 1, scale: 1, duration: 1.1 }
-      )
-        .fromTo(
-          ".hero__card",
-          { opacity: 0, y: 16 },
-          { opacity: 1, y: 0, duration: 0.8 },
-          "-=0.8"
-        )
-        .fromTo(
-          ".hero__blessing-wrap",
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.55"
-        )
-        .fromTo(
-          ".hero__name--first",
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.35"
-        )
-        .fromTo(
-          ".hero__ampersand",
-          { opacity: 0, scale: 0.7 },
-          { opacity: 1, scale: 1, duration: 0.4 },
-          "-=0.35"
-        )
-        .fromTo(
-          ".hero__name--second",
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.35"
-        )
-        .fromTo(
-          ".hero__invitation-text",
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.3"
-        )
-        .fromTo(
-          ".hero__meta",
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.3"
-        )
-        .fromTo(
-          ".hero__action-wrap",
-          { opacity: 0, y: 8 },
-          { opacity: 1, y: 0, duration: 0.5 },
-          "-=0.25"
-        )
-        .fromTo(
-          ".hero__scroll-cue",
-          { opacity: 0 },
-          { opacity: 1, duration: 0.6 },
-          "-=0.2"
-        );
-    },
-    { scope: main }
-  );
-
-  // High-performance IntersectionObserver reveal system (reveals ONCE, unobserves immediately: zero jitter)
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       document
@@ -566,14 +531,14 @@ export function InvitationExperience() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-revealed");
-            obs.unobserve(entry.target); // Unobserve immediately: stays visible permanently, never re-animates
+            obs.unobserve(entry.target);
           }
         });
       },
       {
         rootMargin: "0px 0px -6% 0px",
         threshold: 0.1,
-      }
+      },
     );
 
     const elements = document.querySelectorAll("[data-reveal]");
@@ -582,29 +547,63 @@ export function InvitationExperience() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(
+    () => () => {
+      if (shareTimer.current) window.clearTimeout(shareTimer.current);
+      if (calendarTimer.current) window.clearTimeout(calendarTimer.current);
+    },
+    [],
+  );
+
+  const resetLabel = (
+    timer: React.MutableRefObject<number | null>,
+    callback: () => void,
+  ) => {
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(callback, 2000);
+  };
+
   const share = async () => {
     const data = {
-      title: "Sunil & Pooja — Wedding Invitation",
-      text: "Join us for Sunil & Pooja’s wedding celebrations, 11–13 December 2026. Sumuhurthamu: 13 December at 4:05 AM IST.",
+      title: "Sunil & Poojitha — Wedding Invitation",
+      text: "Join us for Sunil & Poojitha’s wedding celebrations, 11–13 December 2026. Sumuhurthamu: 13 December at 4:05 AM IST.",
       url: location.href,
     };
     try {
-      if (navigator.share) await navigator.share(data);
-      else {
-        await navigator.clipboard.writeText(`${data.text} ${data.url}`);
+      if (navigator.share) {
+        await navigator.share(data);
+        setShareLabel("Invitation shared");
+      } else {
+        await copyInvitation(`${data.text}\n${data.url}`);
         setShareLabel("Invitation copied");
-        window.setTimeout(() => setShareLabel("Share invitation"), 1800);
       }
-    } catch {
-      /* sharing cancelled */
+      resetLabel(shareTimer, () => setShareLabel("Share invitation"));
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setShareLabel("Try again");
+      resetLabel(shareTimer, () => setShareLabel("Share invitation"));
     }
+  };
+
+  const saveCalendar = () => {
+    try {
+      downloadCalendar();
+      setCalendarLabel("Calendar saved");
+    } catch {
+      setCalendarLabel("Try again");
+    }
+    resetLabel(calendarTimer, () => setCalendarLabel("Save to calendar"));
   };
 
   return (
     <main ref={main}>
       <HeroInvitation />
 
-      <section className="story section" id="story" aria-labelledby="story-title">
+      <section
+        className="story section"
+        id="story"
+        aria-labelledby="story-title"
+      >
         <div className="container story__grid">
           <div className="story__portraits" data-reveal>
             <figure className="arched-photo arched-photo--main">
@@ -612,7 +611,7 @@ export function InvitationExperience() {
                 src={invitation.assets.couplePortraitOne}
                 fill
                 sizes="(max-width: 767px) 78vw, 460px"
-                alt="Sunil and Pooja walking hand in hand"
+                alt="Sunil and Poojitha walking hand in hand"
               />
             </figure>
             <figure className="arched-photo arched-photo--inset">
@@ -620,7 +619,7 @@ export function InvitationExperience() {
                 src={invitation.assets.couplePortraitTwo}
                 fill
                 sizes="(max-width: 767px) 42vw, 230px"
-                alt="Sunil and Pooja together by a waterfall"
+                alt="Sunil and Poojitha together by a waterfall"
               />
             </figure>
           </div>
@@ -628,11 +627,11 @@ export function InvitationExperience() {
             <h2 id="story-title">Two hearts, one beginning</h2>
             <FloralDivider />
             <p>
-              As we begin this new chapter, your presence and blessings would make our
-              celebration complete.
+              As we begin this new chapter, your presence and blessings would
+              make our celebration complete.
             </p>
             <p className="signature">
-              Sunil <i>&amp;</i> Pooja
+              Sunil <i>&amp;</i> Poojitha
             </p>
           </div>
         </div>
@@ -654,7 +653,9 @@ export function InvitationExperience() {
               <PetSticker />
             </div>
             <p className="pet-names">{invitation.pets.join(" · ")}</p>
-            <p>Our celebration would not be complete without their paw prints.</p>
+            <p>
+              Our celebration would not be complete without their paw prints.
+            </p>
           </div>
           <div className="family__desktop-art">
             <PetSticker />
@@ -662,10 +663,16 @@ export function InvitationExperience() {
         </div>
         <div className="container welcome" data-reveal>
           <p>
-            With love and blessings from <strong>{invitation.family.groomBrother.name}</strong>{" "}
-            <span className="welcome__relation">({invitation.family.groomBrother.relation})</span>{" "}
+            With love and blessings from{" "}
+            <strong>{invitation.family.groomBrother.name}</strong>{" "}
+            <span className="welcome__relation">
+              ({invitation.family.groomBrother.relation})
+            </span>{" "}
             and <strong>{invitation.family.brideBrother.name}</strong>{" "}
-            <span className="welcome__relation">({invitation.family.brideBrother.relation})</span>.
+            <span className="welcome__relation">
+              ({invitation.family.brideBrother.relation})
+            </span>
+            .
           </p>
         </div>
       </section>
@@ -681,8 +688,8 @@ export function InvitationExperience() {
           <div data-reveal>
             <h2 id="celebrations-title">Celebrate with us</h2>
             <p>
-              All timings are in India Standard Time (IST). The Sumuhurthamu begins early on 13
-              December, following the reception night.
+              All timings are in India Standard Time (IST). The Sumuhurthamu
+              begins early on 13 December, following the reception night.
             </p>
           </div>
           <CalendarOverview />
@@ -692,7 +699,11 @@ export function InvitationExperience() {
         </div>
       </section>
 
-      <section className="venue section" id="venue" aria-labelledby="venue-title">
+      <section
+        className="venue section"
+        id="venue"
+        aria-labelledby="venue-title"
+      >
         <div className="container venue__card" data-reveal>
           <div className="venue__crest">
             <Monogram />
@@ -705,7 +716,7 @@ export function InvitationExperience() {
             <a
               className="button"
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                invitation.venue.fullAddress
+                invitation.venue.fullAddress,
               )}`}
               target="_blank"
               rel="noopener noreferrer"
@@ -723,25 +734,39 @@ export function InvitationExperience() {
             Mee Raaka Maa Aanandam
           </p>
           <h2 id="closing-title">
-            With love,<br />
-            Sunil <i>&amp;</i> Pooja
+            With love,
+            <br />
+            Sunil <i>&amp;</i> Poojitha
           </h2>
           <p>We cannot wait to celebrate with you.</p>
-          <p className="closing__date">Sumuhurthamu · 13 December 2026 · 4:05 AM IST</p>
+          <p className="closing__date">
+            Sumuhurthamu · 13 December 2026 · 4:05 AM IST
+          </p>
           <Countdown />
           <div className="closing__actions">
-            <button className="button button--ivory" onClick={share} type="button">
+            <button
+              className="button button--ivory"
+              onClick={share}
+              type="button"
+              aria-label="Share Sunil and Poojitha's wedding invitation"
+            >
               {shareLabel}
             </button>
             <button
               className="button button--gold-subtle"
-              onClick={downloadFullCalendar}
+              onClick={saveCalendar}
               type="button"
+              aria-label="Download the complete wedding schedule as a calendar file"
             >
-              Save to calendar
+              {calendarLabel}
             </button>
+            <span className="sr-only" aria-live="polite">
+              {shareLabel !== "Share invitation" ? shareLabel : calendarLabel}
+            </span>
           </div>
-          <small>Wedding celebrations · 11–13 December 2026 · New Khursipar, Bhilai</small>
+          <small>
+            Wedding celebrations · 11–13 December 2026 · New Khursipar, Bhilai
+          </small>
         </div>
       </section>
     </main>
