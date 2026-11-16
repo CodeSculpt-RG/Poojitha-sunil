@@ -13,7 +13,7 @@ const dateFormat = new Intl.DateTimeFormat("en-IN", {
 });
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
-const COUNTDOWN_UNITS = ["days", "hours", "minutes", "seconds"];
+const COUNTDOWN_UNITS = ["DAYS", "HOURS", "MINUTES", "SECONDS"] as const;
 const EVENT_SYMBOLS: Record<string, string> = {
   rata: "✦",
   pradanam: "◇",
@@ -618,38 +618,39 @@ function Schedule() {
   );
 }
 
+function getMuhurthamRemaining() {
+  const target =
+    Date.parse(invitation.muhurthamISO) || Date.UTC(2026, 11, 12, 22, 35, 0);
+  return Math.max(0, target - Date.now());
+}
+
 function Countdown() {
-  const [remaining, setRemaining] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState<number>(getMuhurthamRemaining);
 
   useEffect(() => {
-    const tick = () =>
-      setRemaining(
-        Math.max(0, new Date(invitation.muhurthamISO).getTime() - Date.now()),
-      );
-    tick();
-    const id = window.setInterval(tick, 1000);
+    setRemaining(getMuhurthamRemaining());
+    const id = window.setInterval(() => {
+      setRemaining(getMuhurthamRemaining());
+    }, 1000);
     return () => window.clearInterval(id);
   }, []);
 
   if (remaining === 0)
     return <p className="countdown-complete">The sacred hour has arrived.</p>;
 
-  const values =
-    remaining === null
-      ? null
-      : [
-        Math.floor(remaining / 86400000),
-        Math.floor(remaining / 3600000) % 24,
-        Math.floor(remaining / 60000) % 60,
-        Math.floor(remaining / 1000) % 60,
-      ];
+  const values = [
+    Math.floor(remaining / 86400000),
+    Math.floor(remaining / 3600000) % 24,
+    Math.floor(remaining / 60000) % 60,
+    Math.floor(remaining / 1000) % 60,
+  ];
 
   return (
     <div className="countdown" aria-label="Countdown to the sumuhurtham">
       {COUNTDOWN_UNITS.map((label, index) => (
         <div className="countdown__item" key={label}>
-          <span className="countdown__digit">
-            {values ? String(values[index]).padStart(2, "0") : "—"}
+          <span className="countdown__digit" suppressHydrationWarning>
+            {String(values[index]).padStart(2, "0")}
           </span>
           <span className="countdown__label">{label}</span>
         </div>
