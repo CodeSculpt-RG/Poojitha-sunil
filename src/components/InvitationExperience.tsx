@@ -16,7 +16,6 @@ const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 const COUNTDOWN_UNITS = ["days", "hours", "minutes", "seconds"];
 const EVENT_SYMBOLS: Record<string, string> = {
   rata: "✦",
-  pelli: "❧",
   pradanam: "◇",
   haldi: "☼",
   barat: "♘",

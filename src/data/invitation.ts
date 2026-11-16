@@ -52,14 +52,6 @@ export const invitation = {
       end: "08:30",
     },
     {
-      id: "pelli",
-      date: "2026-12-11",
-      label: "Pellikuthuru & Pellikoduku",
-      description:
-        "Ceremonial blessings and traditional adorning of the bride and groom.",
-      start: "09:00",
-    },
-    {
       id: "pradanam",
       date: "2026-12-12",
       label: "Pradanamu",
