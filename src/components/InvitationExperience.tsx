@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { dateChapters, invitation, type WeddingEvent } from "@/data/invitation";
 import { FloralDivider, Monogram } from "./Ornaments";
 
@@ -113,21 +113,62 @@ async function copyInvitation(text: string) {
 }
 
 function HeroInvitation() {
+  const [isOpening, setIsOpening] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
+  const openingTimer = useRef<number | null>(null);
+
+  useLayoutEffect(() => {
+    if (hasOpened) return;
+
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousScrollRestoration = history.scrollRestoration;
+    history.scrollRestoration = "manual";
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      history.scrollRestoration = previousScrollRestoration;
+      if (openingTimer.current) window.clearTimeout(openingTimer.current);
+    };
+  }, [hasOpened]);
+
   const onContinue = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    document
-      .getElementById("story")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (isOpening) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    setIsOpening(true);
+    openingTimer.current = window.setTimeout(
+      () => {
+        setHasOpened(true);
+        window.requestAnimationFrame(() => {
+          document
+            .getElementById("family-blessings")
+            ?.scrollIntoView({ behavior: "auto", block: "start" });
+          setIsOpening(false);
+        });
+      },
+      reducedMotion ? 0 : 760,
+    );
   };
 
   return (
     <section
-      className="hero"
+      className={`hero${isOpening ? " hero--opening" : ""}`}
       id="invitation"
       aria-labelledby="invitation-title"
     >
       <div className="hero__frame" aria-hidden="true">
       </div>
+
+      <div className="hero__veil" aria-hidden="true" />
 
       <div className="hero__container">
         <div className="hero__card">
@@ -173,14 +214,18 @@ function HeroInvitation() {
 
           <div className="hero__action-wrap">
             <a
-              className="hero__action"
-              href="#story"
+              className={`hero__action${isOpening ? " is-opening" : ""}`}
+              href="#family-blessings"
               onClick={onContinue}
+              aria-busy={isOpening}
               aria-label="View invitation, continue to wedding story"
             >
-              <span>View Invitation</span>
+              <span className="hero__action-shine" aria-hidden="true" />
+              <span className="hero__action-label">
+                {isOpening ? "Opening Invitation" : "View Invitation"}
+              </span>
               <span className="hero__action-icon" aria-hidden="true">
-                →
+                ↓
               </span>
             </a>
           </div>
@@ -207,42 +252,71 @@ function PetSticker() {
 }
 
 function BrotherNote() {
-  const { groomBrother } = invitation.family;
+  const { groomBrother, brideBrother } = invitation.family;
+  const brotherNotes = [groomBrother, brideBrother];
 
   return (
     <section
       className="brother-note section"
       id="brother-note"
-      aria-labelledby="brother-note-title"
+      aria-labelledby="brother-notes-title"
     >
-      <div className="container brother-note__card" data-reveal>
-        <div className="brother-note__ornament" aria-hidden="true">
-          <FloralDivider />
-        </div>
+      <h2 className="sr-only" id="brother-notes-title">
+        Messages from the couple&apos;s brothers
+      </h2>
+      <div className="container brother-note__list">
+        {brotherNotes.map((brother) => (
+          <article className="brother-note__card" data-reveal key={brother.name}>
+            <div className="brother-note__ornament" aria-hidden="true">
+              <FloralDivider />
+            </div>
 
-        <p className="brother-note__eyebrow">
-          A note from the Groom&apos;s Brother
-        </p>
+            <p className="brother-note__eyebrow">
+              A note from the {brother.relation}
+            </p>
 
-        <div className="brother-note__header">
-          <h2 id="brother-note-title" className="brother-note__name">
-            {groomBrother.name}
-          </h2>
-          <p className="brother-note__relation">{groomBrother.relation}</p>
-        </div>
+            <div className="brother-note__header">
+              <h3 className="brother-note__name">{brother.name}</h3>
+              <p className="brother-note__relation">{brother.relation}</p>
+            </div>
 
-        <div className="brother-note__body">
-          <p className="brother-note__message">
-            &ldquo;{groomBrother.note}&rdquo;
-          </p>
-        </div>
+            <div className="brother-note__body">
+              <p className="brother-note__message">
+                &ldquo;{brother.note}&rdquo;
+              </p>
+            </div>
 
-        <div className="brother-note__closing" aria-hidden="true">
-          <span className="brother-note__closing-line" />
-          <span className="brother-note__closing-motif">❦</span>
-          <span className="brother-note__closing-line" />
-        </div>
+            <div className="brother-note__closing" aria-hidden="true">
+              <span className="brother-note__closing-line" />
+              <span className="brother-note__closing-motif">❦</span>
+              <span className="brother-note__closing-line" />
+            </div>
+          </article>
+        ))}
       </div>
+    </section>
+  );
+}
+
+function FamilyBlessings() {
+  return (
+    <section
+      className="family-blessings section"
+      id="family-blessings"
+      aria-labelledby="family-blessings-title"
+    >
+      <h2 className="sr-only" id="family-blessings-title">
+        Family blessings for Sunil and Poojitha
+      </h2>
+      <Image
+        className="family-blessings__image"
+        data-reveal
+        src="/media/family-blessings-invitation.png"
+        width={1024}
+        height={1536}
+        sizes="(max-width: 1024px) 100vw, 1024px"
+        alt="Family wedding invitation for Sunil Kumar and Poojitha with blessings from their parents, elders, relatives, and friends"
+      />
     </section>
   );
 }
@@ -302,9 +376,8 @@ function Schedule() {
           <div className="schedule__events">
             {group.events.map((event) => (
               <article
-                className={`schedule__event ${
-                  event.id === "muhurtham" ? "schedule__event--muhurtham" : ""
-                }`}
+                className={`schedule__event ${event.id === "muhurtham" ? "schedule__event--muhurtham" : ""
+                  }`}
                 key={event.id}
               >
                 <span className="schedule__symbol" aria-hidden="true">
@@ -359,11 +432,11 @@ function Countdown() {
     remaining === null
       ? null
       : [
-          Math.floor(remaining / 86400000),
-          Math.floor(remaining / 3600000) % 24,
-          Math.floor(remaining / 60000) % 60,
-          Math.floor(remaining / 1000) % 60,
-        ];
+        Math.floor(remaining / 86400000),
+        Math.floor(remaining / 3600000) % 24,
+        Math.floor(remaining / 60000) % 60,
+        Math.floor(remaining / 1000) % 60,
+      ];
 
   return (
     <div className="countdown" aria-label="Countdown to the sumuhurthamu">
@@ -527,17 +600,18 @@ export function InvitationExperience() {
     }
 
     const observer = new IntersectionObserver(
-      (entries, obs) => {
+      (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-revealed");
-            obs.unobserve(entry.target);
+          } else {
+            entry.target.classList.remove("is-revealed");
           }
         });
       },
       {
-        rootMargin: "0px 0px -6% 0px",
-        threshold: 0.1,
+        rootMargin: "-7% 0px -7% 0px",
+        threshold: 0.08,
       },
     );
 
@@ -598,6 +672,28 @@ export function InvitationExperience() {
   return (
     <main ref={main}>
       <HeroInvitation />
+
+      <FamilyBlessings />
+
+      <section
+        className="celebrations section"
+        id="celebrations"
+        aria-labelledby="celebrations-title"
+      >
+        <div className="container celebrations__intro">
+          <div data-reveal>
+            <h2 id="celebrations-title">Celebrate with us</h2>
+            <p>
+              All timings are in India Standard Time (IST). The Sumuhurthamu
+              begins early on 13 December, following the reception night.
+            </p>
+          </div>
+          <CalendarOverview />
+        </div>
+        <div className="container">
+          <Schedule />
+        </div>
+      </section>
 
       <section
         className="story section"
@@ -663,7 +759,7 @@ export function InvitationExperience() {
         </div>
         <div className="container welcome" data-reveal>
           <p>
-            With love and blessings from{" "}
+            With love   from{" "}
             <strong>{invitation.family.groomBrother.name}</strong>{" "}
             <span className="welcome__relation">
               ({invitation.family.groomBrother.relation})
@@ -678,26 +774,6 @@ export function InvitationExperience() {
       </section>
 
       <BrotherNote />
-
-      <section
-        className="celebrations section"
-        id="celebrations"
-        aria-labelledby="celebrations-title"
-      >
-        <div className="container celebrations__intro">
-          <div data-reveal>
-            <h2 id="celebrations-title">Celebrate with us</h2>
-            <p>
-              All timings are in India Standard Time (IST). The Sumuhurthamu
-              begins early on 13 December, following the reception night.
-            </p>
-          </div>
-          <CalendarOverview />
-        </div>
-        <div className="container">
-          <Schedule />
-        </div>
-      </section>
 
       <section
         className="venue section"

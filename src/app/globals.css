@@ -141,30 +141,22 @@ h2 {
   width: 64px;
   border-top: 1px solid currentColor;
 }
-.monogram {
+.couple-illustration {
   width: 112px;
   height: 112px;
-  border: 1px solid var(--gold);
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
   border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  background: var(--ivory);
-  color: var(--gold);
-  font: 2.9rem var(--display);
+  border: 1px solid rgba(214, 178, 120, 0.72);
+  background: #d9d0c6;
+  box-shadow: 0 10px 24px rgba(40, 25, 16, 0.2);
 }
-.monogram::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  opacity: 0.55;
-}
-.monogram i {
-  margin: 0 -2px;
-  font-size: 1.2rem;
+.couple-illustration img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 [data-reveal] {
@@ -179,6 +171,37 @@ h2 {
 [data-reveal].is-revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+[data-reveal] :is(h2, h3, h4, .pet-names, .signature),
+[data-reveal] p {
+  opacity: 0;
+  filter: blur(5px);
+  transform: translateY(16px) scale(0.985);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 620ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, filter, transform;
+}
+
+[data-reveal].is-revealed :is(h2, h3, h4, .pet-names, .signature),
+[data-reveal].is-revealed p {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0) scale(1);
+}
+
+[data-reveal].is-revealed :is(h2, h3, h4, .pet-names) {
+  transition-delay: 90ms;
+}
+
+[data-reveal].is-revealed p {
+  transition-delay: 170ms;
+}
+
+[data-reveal].is-revealed p + p {
+  transition-delay: 240ms;
 }
 
 .hero {
@@ -203,6 +226,15 @@ h2 {
   background-repeat: no-repeat;
   background-size: 100% 100%;
   animation: heroTempleIn 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: #fff8ed;
 }
 
 .hero__temple-art {
@@ -367,6 +399,7 @@ h2 {
   width: 100%;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 
 .hero__action {
@@ -377,6 +410,8 @@ h2 {
   align-items: center;
   justify-content: center;
   gap: 14px;
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(180deg, #ac0d2c 0%, #7d0821 100%);
   color: #fffaf2;
   border: 1px solid rgba(173, 134, 72, 0.7);
@@ -395,6 +430,33 @@ h2 {
   -webkit-tap-highlight-color: transparent;
 }
 
+.hero__action::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(255, 243, 213, 0.28);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.hero__action-label,
+.hero__action-icon {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__action-shine {
+  position: absolute;
+  top: -60%;
+  bottom: -60%;
+  left: -42%;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255, 245, 218, 0.5), transparent);
+  transform: rotate(18deg);
+  animation: invitationShine 3.2s 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .hero__action:hover {
   background: linear-gradient(180deg, #bd1235 0%, #8d0b29 100%);
   border-color: #d6b278;
@@ -411,10 +473,39 @@ h2 {
   font-size: 1rem;
   color: #e2c28e;
   transition: transform 0.2s ease;
+  animation: invitationArrow 1.8s ease-in-out infinite;
 }
 
 .hero__action:hover .hero__action-icon {
-  transform: translateX(4px);
+  animation-play-state: paused;
+  transform: translateY(3px);
+}
+
+.hero__action.is-opening {
+  pointer-events: none;
+  background: linear-gradient(180deg, #bd1235 0%, #76071f 100%);
+  animation: invitationOpen 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero__action.is-opening .hero__action-shine {
+  width: 42%;
+  animation: invitationShineOpen 560ms ease-out both;
+}
+
+.hero__action.is-opening .hero__action-icon {
+  animation: invitationArrowOpen 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero--opening .hero__frame {
+  animation: templeOpen 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero--opening .hero__card {
+  animation: invitationContentOut 580ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.hero--opening .hero__veil {
+  animation: invitationVeil 760ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .hero__bottom-lotus {
@@ -432,6 +523,49 @@ h2 {
 @keyframes heroTempleIn {
   from { opacity: 0; transform: scale(1.035); }
   to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes invitationShine {
+  0%, 62% { left: -42%; }
+  100% { left: 120%; }
+}
+
+@keyframes invitationShineOpen {
+  from { left: -42%; }
+  to { left: 120%; }
+}
+
+@keyframes invitationArrow {
+  0%, 100% { transform: translateY(-1px); }
+  50% { transform: translateY(3px); }
+}
+
+@keyframes invitationArrowOpen {
+  0% { opacity: 1; transform: translateY(0); }
+  55% { opacity: 0; transform: translateY(12px); }
+  56% { opacity: 0; transform: translateY(-8px); }
+  100% { opacity: 1; transform: translateY(2px); }
+}
+
+@keyframes invitationOpen {
+  0% { transform: scale(1); }
+  45% { transform: scale(0.97); }
+  100% { transform: scale(1.035); box-shadow: 0 14px 34px rgba(103, 28, 45, 0.38); }
+}
+
+@keyframes templeOpen {
+  from { filter: brightness(1); transform: scale(1); }
+  to { filter: brightness(1.12) saturate(0.9); transform: scale(1.035); }
+}
+
+@keyframes invitationContentOut {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-14px) scale(0.985); }
+}
+
+@keyframes invitationVeil {
+  0%, 32% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 .hero__transition {
@@ -636,9 +770,10 @@ h2 {
 }
 .family__art {
   width: min(100%, 420px);
-  aspect-ratio: 1;
+  aspect-ratio: 1 / 0.865;
   margin-inline: auto;
   position: relative;
+  overflow: hidden;
 }
 .family__art::before {
   content: "";
@@ -715,12 +850,19 @@ h2 {
   pointer-events: none;
 }
 
-.brother-note__card {
+.brother-note__list {
   max-width: 760px;
   margin-inline: auto;
+}
+
+.brother-note__card {
   text-align: center;
   padding: clamp(40px, 5.5vw, 64px) clamp(24px, 4vw, 44px);
   position: relative;
+}
+
+.brother-note__card + .brother-note__card {
+  border-top: 1px solid rgba(173, 134, 72, 0.24);
 }
 
 .brother-note .floral-divider {
@@ -829,6 +971,20 @@ h2 {
   transition:
     opacity 650ms ease 230ms,
     transform 650ms ease 230ms;
+}
+
+.family-blessings {
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background: #fff8ee;
+}
+.family-blessings__image {
+  width: min(100%, 1024px);
+  height: auto;
+  display: block;
+  flex: 0 0 auto;
 }
 
 .celebrations {
@@ -1053,6 +1209,13 @@ h2 {
     transparent 1px
   );
   background-size: 22px 22px;
+  overflow: hidden;
+}
+.venue__crest .couple-illustration {
+  width: 112px;
+  height: 112px;
+  border: 1px solid rgba(214, 178, 120, 0.72);
+  box-shadow: 0 10px 24px rgba(20, 42, 35, 0.28);
 }
 .venue__copy {
   padding: clamp(48px, 7vw, 86px);
@@ -1082,8 +1245,10 @@ h2 {
 .closing__content {
   max-width: 940px;
 }
-.closing .monogram {
-  margin-bottom: 24px;
+.closing .couple-illustration {
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 24px;
 }
 .closing__blessing {
   margin: 0 0 16px;
@@ -1341,6 +1506,10 @@ h2 {
 }
 
 @media (max-width: 600px) {
+  .family-blessings__image {
+    width: 100%;
+  }
+
   .hero__container {
     padding-inline: 18px;
   }
@@ -1453,6 +1622,12 @@ h2 {
   }
   [data-reveal] {
     opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  [data-reveal] :is(h2, h3, h4, p, .pet-names, .signature) {
+    opacity: 1 !important;
+    filter: none !important;
     transform: none !important;
     transition: none !important;
   }

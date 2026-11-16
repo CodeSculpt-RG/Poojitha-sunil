@@ -1,13 +1,16 @@
-export function Monogram({ small = false }: { small?: boolean }) {
+import Image from "next/image";
+
+export function Monogram() {
   return (
-    <span
-      className={`monogram ${small ? "monogram--small" : ""}`}
-      aria-label="Sunil and Poojitha monogram"
-    >
-      <span>S</span>
-      <i>&amp;</i>
-      <span>P</span>
-    </span>
+    <figure className="couple-illustration">
+      <Image
+        src="/media/couple-forest-illustration.png"
+        width={1254}
+        height={1254}
+        sizes="(max-width: 900px) 100vw, 420px"
+        alt="Illustration of Sunil and Poojitha together beneath a tree"
+      />
+    </figure>
   );
 }
 

@@ -30,6 +30,7 @@ export const invitation = {
     brideBrother: {
       name: "Sai",
       relation: "Bride's Brother",
+      note: "Watching my sister begin this beautiful new chapter fills my heart with happiness and pride. Poojitha and Sunil, may your journey together always be filled with understanding, laughter, strength, and a love that grows deeper with every passing day. I am so happy to welcome Sunil into our family and to celebrate this unforgettable moment with you both.",
     },
   },
   pets: ["Mummble", "Max"],
@@ -73,15 +74,6 @@ export const invitation = {
       description:
         "Traditional turmeric ceremony and joyful celebrations with family.",
       start: "14:30",
-      featured: true,
-    },
-    {
-      id: "barat",
-      date: "2026-12-12",
-      label: "Edurukolu",
-      description:
-        "Grand celebratory procession and warm traditional welcoming of the groom.",
-      start: "18:00",
       featured: true,
     },
     {
