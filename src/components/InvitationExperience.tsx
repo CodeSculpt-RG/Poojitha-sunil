@@ -115,6 +115,19 @@ function HeroInvitation() {
   const [isOpening, setIsOpening] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
   const openingTimer = useRef<number | null>(null);
+  const scrollFrame = useRef<number | null>(null);
+  const previousScrollBehavior = useRef<string | null>(null);
+
+  useEffect(
+    () => () => {
+      if (scrollFrame.current) window.cancelAnimationFrame(scrollFrame.current);
+      if (previousScrollBehavior.current !== null) {
+        document.documentElement.style.scrollBehavior =
+          previousScrollBehavior.current;
+      }
+    },
+    [],
+  );
 
   useLayoutEffect(() => {
     if (hasOpened) return;
@@ -143,18 +156,59 @@ function HeroInvitation() {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
+    const revealInvitation = () => {
+      const destination = document.getElementById("family-blessings");
+      if (!destination) {
+        setIsOpening(false);
+        return;
+      }
+
+      if (reducedMotion) {
+        destination.scrollIntoView({ behavior: "auto", block: "start" });
+        setIsOpening(false);
+        return;
+      }
+
+      const startY = window.scrollY;
+      const targetY = destination.getBoundingClientRect().top + startY;
+      const duration = 1150;
+      const startTime = performance.now();
+      previousScrollBehavior.current =
+        document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      const easeInOutQuint = (progress: number) =>
+        progress < 0.5
+          ? 16 * progress ** 5
+          : 1 - (-2 * progress + 2) ** 5 / 2;
+
+      const scroll = (now: number) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const eased = easeInOutQuint(progress);
+        window.scrollTo(0, startY + (targetY - startY) * eased);
+
+        if (progress < 1) {
+          scrollFrame.current = window.requestAnimationFrame(scroll);
+        } else {
+          scrollFrame.current = null;
+          document.documentElement.style.scrollBehavior =
+            previousScrollBehavior.current ?? "";
+          previousScrollBehavior.current = null;
+          setIsOpening(false);
+        }
+      };
+
+      scrollFrame.current = window.requestAnimationFrame(scroll);
+    };
+
     setIsOpening(true);
     openingTimer.current = window.setTimeout(
       () => {
         setHasOpened(true);
         window.requestAnimationFrame(() => {
-          document
-            .getElementById("family-blessings")
-            ?.scrollIntoView({ behavior: "auto", block: "start" });
-          setIsOpening(false);
+          window.requestAnimationFrame(revealInvitation);
         });
       },
-      reducedMotion ? 0 : 760,
+      reducedMotion ? 0 : 880,
     );
   };
 
@@ -591,12 +645,14 @@ function Countdown() {
       ];
 
   return (
-    <div className="countdown" aria-label="Countdown to the sumuhurthamu">
+    <div className="countdown" aria-label="Countdown to the sumuhurtham">
       {COUNTDOWN_UNITS.map((label, index) => (
-        <span key={label}>
-          {values ? String(values[index]).padStart(2, "0") : "—"}
-          <small>{label}</small>
-        </span>
+        <div className="countdown__item" key={label}>
+          <span className="countdown__digit">
+            {values ? String(values[index]).padStart(2, "0") : "—"}
+          </span>
+          <span className="countdown__label">{label}</span>
+        </div>
       ))}
     </div>
   );
@@ -736,6 +792,85 @@ function CoupleFilm() {
   );
 }
 
+function AmbientAudio() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isMuted, setIsMuted] = useState(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.volume = 0.42;
+
+    const startAudio = async () => {
+      try {
+        await audio.play();
+        window.removeEventListener("pointerdown", startAudio);
+        window.removeEventListener("keydown", startAudio);
+      } catch {
+        // Browsers may require a visitor gesture before allowing sound.
+      }
+    };
+
+    void startAudio();
+    window.addEventListener("pointerdown", startAudio);
+    window.addEventListener("keydown", startAudio);
+
+    return () => {
+      window.removeEventListener("pointerdown", startAudio);
+      window.removeEventListener("keydown", startAudio);
+      audio.pause();
+    };
+  }, []);
+
+  const toggleMute = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isMuted || audio.paused) {
+      audio.muted = false;
+      setIsMuted(false);
+      try {
+        await audio.play();
+      } catch {
+        return;
+      }
+    } else {
+      audio.muted = true;
+      setIsMuted(true);
+    }
+  };
+
+  return (
+    <>
+      <audio
+        ref={audioRef}
+        src="/audio/audio.mpeg"
+        preload="auto"
+        loop
+        playsInline
+      />
+      <button
+        className="ambient-audio"
+        type="button"
+        onClick={toggleMute}
+        aria-label={isMuted ? "Unmute background music" : "Mute background music"}
+        aria-pressed={isMuted}
+        title={isMuted ? "Unmute music" : "Mute music"}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9.5v5h3.5l4.5 3.75V5.75L7.5 9.5H4Z" />
+          {isMuted ? (
+            <path d="m16 9 5 5m0-5-5 5" />
+          ) : (
+            <path d="M15.5 9.2a4 4 0 0 1 0 5.6m2.8-8.4a8 8 0 0 1 0 11.2" />
+          )}
+        </svg>
+      </button>
+    </>
+  );
+}
+
 export function InvitationExperience() {
   const main = useRef<HTMLElement>(null);
   const [shareLabel, setShareLabel] = useState("Share invitation");
@@ -822,6 +957,7 @@ export function InvitationExperience() {
 
   return (
     <main ref={main}>
+      <AmbientAudio />
       <HeroInvitation />
 
       <FamilyBlessings />
@@ -927,73 +1063,196 @@ export function InvitationExperience() {
       <BrotherNote />
 
       <section
-        className="venue section"
+        className="venue"
         id="venue"
         aria-labelledby="venue-title"
       >
-        <div className="container venue__card" data-reveal>
-          <div className="venue__crest">
-            <Monogram />
-          </div>
-          <div className="venue__copy">
-            <h2 id="venue-title">We’ll meet you here</h2>
-            <p className="venue__name">{invitation.venue.name}</p>
-            <p className="venue__locality">{invitation.venue.locality}</p>
-            <p className="venue__address">{invitation.venue.address}</p>
-            <a
-              className="button"
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                invitation.venue.fullAddress,
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open in Google Maps <span aria-hidden="true">↗</span>
-            </a>
-          </div>
+        <div className="venue__shade" aria-hidden="true" />
+        <div className="venue__content" data-reveal>
+          <p className="venue__eyebrow">The place where we celebrate</p>
+          <h2 id="venue-title">We&apos;ll meet you here</h2>
+          <svg
+            className="venue__ornament"
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+          >
+            <circle cx="32" cy="32" r="4" />
+            <path d="M32 8v16m0 16v16M8 32h16m16 0h16M24 24l-7-7m23 7 7-7m-23 23-7 7m23-7 7 7" />
+          </svg>
+          <p className="venue__name">{invitation.venue.name}</p>
+          <p className="venue__locality">{invitation.venue.locality}</p>
+          <p className="venue__address">
+            {invitation.venue.address.replace(",Distt", ", Distt")}
+          </p>
+          <a
+            className="venue__maps"
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              invitation.venue.fullAddress,
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>Open in Google Maps</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M5 15 15 5m-7 0h7v7" />
+            </svg>
+          </a>
         </div>
       </section>
 
-      <section className="closing section" aria-labelledby="closing-title">
-        <div className="container closing__content" data-reveal>
-          <Monogram />
+      <section className="closing" id="closing" aria-labelledby="closing-title">
+        <div className="closing__backdrop" aria-hidden="true">
+          <Image
+            src="/media/closing-bg-clean.webp"
+            alt="Sunil and Poojitha dancing in a flower meadow at sunset"
+            fill
+            priority
+            quality={92}
+            sizes="100vw"
+            className="closing__bg-image"
+          />
+          <div className="closing__overlay" />
+        </div>
+
+        <div className="closing__content" data-reveal>
           <p className="closing__blessing" aria-label="Mee Raaka Maa Aanandam">
             Mee Raaka Maa Aanandam
           </p>
-          <h2 id="closing-title">
+
+          <div className="closing__divider" aria-hidden="true">
+            <span className="closing__divider-line" />
+            <svg
+              className="closing__divider-blossom"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <circle cx="10" cy="10" r="1.8" fill="currentColor" />
+              <path
+                d="M10 2.5a1.5 1.5 0 0 0-1.5 1.5c0 1.2 1.5 3 1.5 3s1.5-1.8 1.5-3a1.5 1.5 0 0 0-1.5-1.5zM10 17.5a1.5 1.5 0 0 0 1.5-1.5c0-1.2-1.5-3-1.5-3s-1.5 1.8-1.5 3a1.5 1.5 0 0 0 1.5 1.5zM2.5 10a1.5 1.5 0 0 0 1.5 1.5c1.2 0 3-1.5 3-1.5s-1.8-1.5-3-1.5a1.5 1.5 0 0 0-1.5 1.5zM17.5 10a1.5 1.5 0 0 0-1.5-1.5c-1.2 0-3 1.5-3 1.5s1.8 1.5 3 1.5a1.5 1.5 0 0 0 1.5-1.5zM4.7 4.7a1.5 1.5 0 0 0 .3 2.1c1 .7 2.8 1 2.8 1s-.3-1.8-1-2.8a1.5 1.5 0 0 0-2.1-.3zM15.3 15.3a1.5 1.5 0 0 0-.3-2.1c-1-.7-2.8-1-2.8-1s.3 1.8 1 2.8a1.5 1.5 0 0 0 2.1.3zM4.7 15.3a1.5 1.5 0 0 0 2.1.3c.7-1 1-2.8 1-2.8s-1.8.3-2.8 1a1.5 1.5 0 0 0-.3 2.1zM15.3 4.7a1.5 1.5 0 0 0-2.1-.3c-.7 1-1 2.8-1 2.8s1.8-.3 2.8-1a1.5 1.5 0 0 0 .3-2.1z"
+                fill="currentColor"
+              />
+            </svg>
+            <span className="closing__divider-line" />
+          </div>
+
+          <h2 id="closing-title" className="closing__title">
             With love,
             <br />
-            Sunil <i>&amp;</i> Poojitha
+            Sunil <span className="closing__amp">&amp;</span> Poojitha
           </h2>
-          <p>We cannot wait to celebrate with you.</p>
-          <p className="closing__date">
-            Sumuhurthamu · 13 December 2026 · 4:05 AM IST
+
+          <p className="closing__subtitle">
+            We cannot wait to celebrate with you.
           </p>
+
+          <p className="closing__date">
+            Sumuhurtham · 13 December 2026 · 4:05 AM IST
+          </p>
+
+          <div className="closing__divider" aria-hidden="true">
+            <span className="closing__divider-line" />
+            <svg
+              className="closing__divider-blossom"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <circle cx="10" cy="10" r="1.8" fill="currentColor" />
+              <path
+                d="M10 2.5a1.5 1.5 0 0 0-1.5 1.5c0 1.2 1.5 3 1.5 3s1.5-1.8 1.5-3a1.5 1.5 0 0 0-1.5-1.5zM10 17.5a1.5 1.5 0 0 0 1.5-1.5c0-1.2-1.5-3-1.5-3s-1.5 1.8-1.5 3a1.5 1.5 0 0 0 1.5 1.5zM2.5 10a1.5 1.5 0 0 0 1.5 1.5c1.2 0 3-1.5 3-1.5s-1.8-1.5-3-1.5a1.5 1.5 0 0 0-1.5 1.5zM17.5 10a1.5 1.5 0 0 0-1.5-1.5c-1.2 0-3 1.5-3 1.5s1.8 1.5 3 1.5a1.5 1.5 0 0 0 1.5-1.5zM4.7 4.7a1.5 1.5 0 0 0 .3 2.1c1 .7 2.8 1 2.8 1s-.3-1.8-1-2.8a1.5 1.5 0 0 0-2.1-.3zM15.3 15.3a1.5 1.5 0 0 0-.3-2.1c-1-.7-2.8-1-2.8-1s.3 1.8 1 2.8a1.5 1.5 0 0 0 2.1.3zM4.7 15.3a1.5 1.5 0 0 0 2.1.3c.7-1 1-2.8 1-2.8s-1.8.3-2.8 1a1.5 1.5 0 0 0-.3 2.1zM15.3 4.7a1.5 1.5 0 0 0-2.1-.3c-.7 1-1 2.8-1 2.8s1.8-.3 2.8-1a1.5 1.5 0 0 0 .3-2.1z"
+                fill="currentColor"
+              />
+            </svg>
+            <span className="closing__divider-line" />
+          </div>
+
           <Countdown />
+
           <div className="closing__actions">
             <button
-              className="button button--ivory"
+              className="closing__btn closing__btn--share"
               onClick={share}
               type="button"
               aria-label="Share Sunil and Poojitha's wedding invitation"
             >
-              {shareLabel}
+              <span>{shareLabel === "Share invitation" ? "SHARE INVITATION" : shareLabel.toUpperCase()}</span>
+              <svg className="closing__btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
             <button
-              className="button button--gold-subtle"
+              className="closing__btn closing__btn--calendar"
               onClick={saveCalendar}
               type="button"
               aria-label="Download the complete wedding schedule as a calendar file"
             >
-              {calendarLabel}
+              <span>{calendarLabel === "Save to calendar" ? "SAVE TO CALENDAR" : calendarLabel.toUpperCase()}</span>
+              <svg className="closing__btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect
+                  x="3"
+                  y="4"
+                  width="18"
+                  height="18"
+                  rx="2"
+                  ry="2"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <line
+                  x1="16"
+                  y1="2"
+                  x2="16"
+                  y2="6"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="8"
+                  y1="2"
+                  x2="8"
+                  y2="6"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+                <line
+                  x1="3"
+                  y1="10"
+                  x2="21"
+                  y2="10"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
             </button>
             <span className="sr-only" aria-live="polite">
               {shareLabel !== "Share invitation" ? shareLabel : calendarLabel}
             </span>
           </div>
-          <small>
-            Wedding celebrations · 11–13 December 2026 · New Khursipar, Bhilai
-          </small>
+
+          <div className="closing__divider closing__divider--bottom" aria-hidden="true">
+            <span className="closing__divider-line" />
+            <svg
+              className="closing__divider-blossom"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <circle cx="10" cy="10" r="1.8" fill="currentColor" />
+              <path
+                d="M10 2.5a1.5 1.5 0 0 0-1.5 1.5c0 1.2 1.5 3 1.5 3s1.5-1.8 1.5-3a1.5 1.5 0 0 0-1.5-1.5zM10 17.5a1.5 1.5 0 0 0 1.5-1.5c0-1.2-1.5-3-1.5-3s-1.5 1.8-1.5 3a1.5 1.5 0 0 0 1.5 1.5zM2.5 10a1.5 1.5 0 0 0 1.5 1.5c1.2 0 3-1.5 3-1.5s-1.8-1.5-3-1.5a1.5 1.5 0 0 0-1.5 1.5zM17.5 10a1.5 1.5 0 0 0-1.5-1.5c-1.2 0-3 1.5-3 1.5s1.8 1.5 3 1.5a1.5 1.5 0 0 0 1.5-1.5zM4.7 4.7a1.5 1.5 0 0 0 .3 2.1c1 .7 2.8 1 2.8 1s-.3-1.8-1-2.8a1.5 1.5 0 0 0-2.1-.3zM15.3 15.3a1.5 1.5 0 0 0-.3-2.1c-1-.7-2.8-1-2.8-1s.3 1.8 1 2.8a1.5 1.5 0 0 0 2.1.3zM4.7 15.3a1.5 1.5 0 0 0 2.1.3c.7-1 1-2.8 1-2.8s-1.8.3-2.8 1a1.5 1.5 0 0 0-.3 2.1zM15.3 4.7a1.5 1.5 0 0 0-2.1-.3c-.7 1-1 2.8-1 2.8s1.8-.3 2.8-1a1.5 1.5 0 0 0 .3-2.1z"
+                fill="currentColor"
+              />
+            </svg>
+            <span className="closing__divider-line" />
+          </div>
         </div>
       </section>
     </main>

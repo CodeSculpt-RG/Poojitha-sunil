@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { FallingPetals } from "@/components/FallingPetals";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -35,7 +36,10 @@ export default function RootLayout({
           fetchPriority="high"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <FallingPetals />
+        {children}
+      </body>
     </html>
   );
 }
