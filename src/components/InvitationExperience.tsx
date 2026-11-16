@@ -299,6 +299,37 @@ function BrotherNote() {
 }
 
 function FamilyBlessings() {
+  const compliments = [
+    "V. Laxmi",
+    "L. Venkat Rao",
+    "L. Srinivas Rao",
+    "L. Vasu",
+    "L. Ramu",
+    "P. Ravi",
+    "P. Venu Gopal",
+    "All Relatives & Friends",
+  ];
+  const awaitingEyes = [
+    "Venu",
+    "Malti",
+    "Pushpa",
+    "Sapna",
+    "Ravi",
+    "Praveen",
+    "Sandeep",
+    "Prashant",
+    "Sheshu",
+    "Monish",
+    "Karthik",
+    "Harshita",
+    "Mokshita",
+    "Aadhya",
+    "Anaya",
+    "Srinish",
+    "Gauransh",
+    "Granth & Mumble",
+  ];
+
   return (
     <section
       className="family-blessings section"
@@ -308,15 +339,137 @@ function FamilyBlessings() {
       <h2 className="sr-only" id="family-blessings-title">
         Family blessings for Sunil and Poojitha
       </h2>
-      <Image
-        className="family-blessings__image"
-        data-reveal
-        src="/media/family-blessings-invitation.png"
-        width={1024}
-        height={1536}
-        sizes="(max-width: 1024px) 100vw, 1024px"
-        alt="Family wedding invitation for Sunil Kumar and Poojitha with blessings from their parents, elders, relatives, and friends"
-      />
+      <div className="family-blessings__sheet" data-reveal>
+        <div className="family-blessings__artwork-wrap">
+          <Image
+            src="/media/family-blessings-header.webp"
+            alt="Sacred temple arch with Lord Ganesha, ceremonial elephants, and deities"
+            width={1024}
+            height={226}
+            priority
+            className="family-blessings__artwork-img"
+            sizes="(max-width: 960px) 100vw, 960px"
+          />
+        </div>
+
+        <div className="family-blessings__content">
+          <div className="invitation-group invitation-group--invocation">
+            <p>
+              <span>Srirastu</span>
+              <b aria-hidden="true">·</b>
+              <span>Shubhmastu</span>
+              <b aria-hidden="true">·</b>
+              <span>Avighnamastu</span>
+            </p>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group">
+            <p className="invitation-kicker">
+              With the blessings of Our Beloved Parents
+            </p>
+            <p className="invitation-emphasis">
+              Late Shri L. Rammurty &amp; Late Smt. L. Simhachalam
+            </p>
+            <p className="invitation-emphasis">
+              Late Shri P. Rajam &amp; Smt. P. Premalata
+            </p>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group invitation-group--message">
+            <p>
+              With the blessings of our elders and the grace of God, we
+              cordially invite you and your family to grace the auspicious
+              occasion of our elder Son Wedding.
+            </p>
+          </div>
+
+          <div className="invitation-couple" aria-label="Wedding couple">
+            <div className="invitation-person invitation-person--groom">
+              <span className="invitation-person__prefix">Chi.</span>
+              <h3 className="invitation-person__name">L. Sunil Kumar</h3>
+              <p className="invitation-person__parents">
+                S/o — Shri L. Srinivas Rao &amp; Smt. L. Jayanti
+              </p>
+            </div>
+
+            <div className="invitation-weds" aria-label="Weds">
+              <span className="invitation-weds__line" aria-hidden="true" />
+              <span className="invitation-weds__text">weds</span>
+              <span className="invitation-weds__line" aria-hidden="true" />
+            </div>
+
+            <div className="invitation-person invitation-person--bride">
+              <span className="invitation-person__prefix">Chi. Sow.</span>
+              <h3 className="invitation-person__name">M. Poojitha</h3>
+              <p className="invitation-person__parents">
+                D/o — Shri M. Surya Prakash &amp; Smt. M. Krishna Kumari
+              </p>
+            </div>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group invitation-list">
+            <h3>With Best Compliments From</h3>
+            <p className="invitation-names-flow">
+              {compliments.map((name, i) => (
+                <span key={name} className="invitation-name-tag">
+                  {name}
+                  {i < compliments.length - 1 && <b aria-hidden="true">·</b>}
+                </span>
+              ))}
+            </p>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group invitation-list">
+            <h3>Awaiting Eyes</h3>
+            <p className="invitation-names-flow">
+              {awaitingEyes.map((name, i) => (
+                <span key={name} className="invitation-name-tag">
+                  {name}
+                  {i < awaitingEyes.length - 1 && <b aria-hidden="true">·</b>}
+                </span>
+              ))}
+            </p>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group invitation-group--closing">
+            <h3>With Blessings of</h3>
+            <p>
+              Your gracious presence and blessings will make this occasion even
+              more special.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -604,14 +757,13 @@ export function InvitationExperience() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-revealed");
-          } else {
-            entry.target.classList.remove("is-revealed");
+            observer.unobserve(entry.target);
           }
         });
       },
       {
-        rootMargin: "-7% 0px -7% 0px",
-        threshold: 0.08,
+        rootMargin: "0px 0px -40px 0px",
+        threshold: 0.05,
       },
     );
 
