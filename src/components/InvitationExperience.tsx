@@ -363,6 +363,21 @@ function FamilyBlessings() {
     "All Relatives & Friends",
   ];
 
+  const awaitingEyes = [
+    "Sunitha",
+    "Pradeep",
+    "Kiran Sushmita",
+    "Sireesha",
+    "Sai",
+    "Bikki",
+    "Lalli",
+    "Priyanshu",
+    "Harshita",
+    "Roshan",
+    "Gayatri",
+    "Max",
+  ];
+
   return (
     <section
       className="family-blessings section"
@@ -484,6 +499,24 @@ function FamilyBlessings() {
               Smt. Krishna Kumari
               <br />
               Sarthak Homes, Flat 131/C, Kukda Road, Kumhari, Dist-Durg (C.G.)
+            </p>
+          </div>
+
+          <div className="invitation-divider" aria-hidden="true">
+            <span />
+            <i>❦</i>
+            <span />
+          </div>
+
+          <div className="invitation-group invitation-list">
+            <h3>Awaiting Eyes</h3>
+            <p className="invitation-names-flow">
+              {awaitingEyes.map((name, i) => (
+                <span key={name} className="invitation-name-tag">
+                  {name}
+                  {i < awaitingEyes.length - 1 && <b aria-hidden="true">·</b>}
+                </span>
+              ))}
             </p>
           </div>
         </div>
