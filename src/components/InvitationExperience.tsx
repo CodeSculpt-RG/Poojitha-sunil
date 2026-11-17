@@ -18,6 +18,7 @@ const EVENT_SYMBOLS: Record<string, string> = {
   rata: "✦",
   pradanam: "◇",
   haldi: "☼",
+  "haldi-sangeet": "☼",
   barat: "♘",
   reception: "✧",
   muhurtham: "❋",
@@ -551,7 +552,7 @@ function Schedule() {
                 key={event.id}
               >
                 <span className="schedule__symbol" aria-hidden="true">
-                  {EVENT_SYMBOLS[event.id]}
+                  {EVENT_SYMBOLS[event.id] || "✦"}
                 </span>
                 <div className="schedule__details">
                   <h4>{event.label}</h4>

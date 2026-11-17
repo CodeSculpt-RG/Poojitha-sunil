@@ -55,6 +55,14 @@ export const invitation = {
       end: "08:50",
     },
     {
+      id: "haldi",
+      date: "2026-12-12",
+      label: "Haldi & Sangeet",
+      description: "Traditional turmeric ceremony and musical celebrations.",
+      start: "11:00",
+      featured: true,
+    },
+    {
       id: "reception",
       date: "2026-12-12",
       label: "Reception & Dinner",
