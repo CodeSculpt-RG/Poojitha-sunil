@@ -68,7 +68,7 @@ export const invitation = {
       label: "Reception & Dinner",
       description:
         "Venue: Agrasen Bhavan, New Khursipar, Bhilai, Distt. Durg (C.G.).",
-      start: "19:00",
+      start: "19:30",
       timeNote: "onwards",
       venue: "Agrasen Bhavan, New Khursipar, Bhilai, Distt. Durg (C.G.)",
       featured: true,
