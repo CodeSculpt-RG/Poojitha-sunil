@@ -48,10 +48,10 @@ function buildCalendar(events: readonly WeddingEvent[]) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Sunil & Poojitha//Wedding Celebrations//EN",
+    "PRODID:-//Poojitha & Sunil//Wedding Celebrations//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:Sunil & Poojitha Wedding Celebrations",
+    "X-WR-CALNAME:Poojitha & Sunil Wedding Celebrations",
     "X-WR-TIMEZONE:Asia/Kolkata",
   ];
 
@@ -62,12 +62,12 @@ function buildCalendar(events: readonly WeddingEvent[]) {
       : `${clean(event.date)}T${clean(event.start)}00`;
     lines.push(
       "BEGIN:VEVENT",
-      `UID:${event.id}@sunil-poojitha-wedding-celebrations`,
+      `UID:${event.id}@poojitha-sunil-wedding-celebrations`,
       `DTSTART;TZID=Asia/Kolkata:${start}`,
       `DTEND;TZID=Asia/Kolkata:${end}`,
-      `SUMMARY:${event.label} — Sunil & Poojitha Wedding`,
+      `SUMMARY:${event.label} — Poojitha & Sunil Wedding`,
       `LOCATION:${event.venue || invitation.venue.fullAddress}`,
-      `DESCRIPTION:${event.description || event.label}. All timings are in India Standard Time (IST).`,
+      `DESCRIPTION:${event.description || event.label}${event.timeNote ? ` ${event.timeNote}` : ""}. All timings are in India Standard Time (IST).`,
       "STATUS:CONFIRMED",
       "END:VEVENT",
     );
@@ -84,7 +84,7 @@ function downloadCalendar() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = "sunil-poojitha-wedding-celebrations.ics";
+  anchor.download = "poojitha-sunil-wedding-celebrations.ics";
   anchor.hidden = true;
   document.body.appendChild(anchor);
   anchor.click();
@@ -251,7 +251,7 @@ function HeroInvitation() {
               &amp;
             </span>
             <span className="hero__name hero__name--second">
-              Poojitha
+              {invitation.couple.second}
             </span>
           </h1>
 
@@ -305,8 +305,7 @@ function PetSticker() {
 }
 
 function BrotherNote() {
-  const { groomBrother, brideBrother } = invitation.family;
-  const brotherNotes = [groomBrother, brideBrother];
+  const { brideBrother } = invitation.family;
 
   return (
     <section
@@ -315,37 +314,35 @@ function BrotherNote() {
       aria-labelledby="brother-notes-title"
     >
       <h2 className="sr-only" id="brother-notes-title">
-        Messages from the couple&apos;s brothers
+        A message from the bride&apos;s brother
       </h2>
       <div className="container brother-note__list">
-        {brotherNotes.map((brother) => (
-          <article className="brother-note__card" data-reveal key={brother.name}>
-            <div className="brother-note__ornament" aria-hidden="true">
-              <FloralDivider />
-            </div>
+        <article className="brother-note__card" data-reveal>
+          <div className="brother-note__ornament" aria-hidden="true">
+            <FloralDivider />
+          </div>
 
-            <p className="brother-note__eyebrow">
-              A note from the {brother.relation}
+          <p className="brother-note__eyebrow">
+            A note from the {brideBrother.relation}
+          </p>
+
+          <div className="brother-note__header">
+            <h3 className="brother-note__name">{brideBrother.name}</h3>
+            <p className="brother-note__relation">{brideBrother.relation}</p>
+          </div>
+
+          <div className="brother-note__body">
+            <p className="brother-note__message">
+              &ldquo;{brideBrother.note}&rdquo;
             </p>
+          </div>
 
-            <div className="brother-note__header">
-              <h3 className="brother-note__name">{brother.name}</h3>
-              <p className="brother-note__relation">{brother.relation}</p>
-            </div>
-
-            <div className="brother-note__body">
-              <p className="brother-note__message">
-                &ldquo;{brother.note}&rdquo;
-              </p>
-            </div>
-
-            <div className="brother-note__closing" aria-hidden="true">
-              <span className="brother-note__closing-line" />
-              <span className="brother-note__closing-motif">❦</span>
-              <span className="brother-note__closing-line" />
-            </div>
-          </article>
-        ))}
+          <div className="brother-note__closing" aria-hidden="true">
+            <span className="brother-note__closing-line" />
+            <span className="brother-note__closing-motif">❦</span>
+            <span className="brother-note__closing-line" />
+          </div>
+        </article>
       </div>
     </section>
   );
@@ -353,34 +350,16 @@ function BrotherNote() {
 
 function FamilyBlessings() {
   const compliments = [
-    "V. Laxmi",
-    "L. Venkat Rao",
-    "L. Srinivas Rao",
-    "L. Vasu",
-    "L. Ramu",
-    "P. Ravi",
-    "P. Venu Gopal",
+    "D. Prabhavati",
+    "V. Eshwar Rao",
+    "V. Venkateshvar Rao",
+    "Late G. Kamala",
+    "K. Gauri",
+    "V. Ramesh",
+    "Nirmala Naidu",
+    "M.S. Vasu",
+    "T. Bhavani",
     "All Relatives & Friends",
-  ];
-  const awaitingEyes = [
-    "Venu",
-    "Malti",
-    "Pushpa",
-    "Sapna",
-    "Ravi",
-    "Praveen",
-    "Sandeep",
-    "Prashant",
-    "Sheshu",
-    "Monish",
-    "Karthik",
-    "Harshita",
-    "Mokshita",
-    "Aadhya",
-    "Anaya",
-    "Srinish",
-    "Gauransh",
-    "Granth & Mumble",
   ];
 
   return (
@@ -390,7 +369,7 @@ function FamilyBlessings() {
       aria-labelledby="family-blessings-title"
     >
       <h2 className="sr-only" id="family-blessings-title">
-        Family blessings for Sunil and Poojitha
+        Family blessings for Poojitha and Sunil
       </h2>
       <div className="family-blessings__sheet" data-reveal>
         <div className="family-blessings__artwork-wrap">
@@ -408,9 +387,9 @@ function FamilyBlessings() {
         <div className="family-blessings__content">
           <div className="invitation-group invitation-group--invocation">
             <p>
-              <span>Srirastu</span>
+              <span>Shri Rastu</span>
               <b aria-hidden="true">·</b>
-              <span>Shubhmastu</span>
+              <span>Shubhamastu</span>
               <b aria-hidden="true">·</b>
               <span>Avighnamastu</span>
             </p>
@@ -424,13 +403,13 @@ function FamilyBlessings() {
 
           <div className="invitation-group">
             <p className="invitation-kicker">
-              With the blessings of Our Beloved Parents
+              With the blessings of our beloved Parents
             </p>
             <p className="invitation-emphasis">
-              Late Shri L. Rammurty &amp; Late Smt. L. Simhachalam
+              Late Shri Madasu Chitti Babu &amp; Smt. Suryakantam
             </p>
             <p className="invitation-emphasis">
-              Late Shri P. Rajam &amp; Smt. P. Premalata
+              Late Shri Vaddadi Narayan Rao &amp; Late Smt. V. Laxmi Bai
             </p>
           </div>
 
@@ -444,16 +423,16 @@ function FamilyBlessings() {
             <p>
               With the blessings of our elders and the grace of God, we
               cordially invite you and your family to grace the auspicious
-              occasion of our elder Son Wedding.
+              occasion of our daughter&apos;s wedding.
             </p>
           </div>
 
           <div className="invitation-couple" aria-label="Wedding couple">
-            <div className="invitation-person invitation-person--groom">
-              <span className="invitation-person__prefix">Chi.</span>
-              <h3 className="invitation-person__name">L. Sunil Kumar</h3>
+            <div className="invitation-person invitation-person--bride">
+              <span className="invitation-person__prefix">Chy. Sow.</span>
+              <h3 className="invitation-person__name">M. Poojitha (Pooja)</h3>
               <p className="invitation-person__parents">
-                S/o — Shri L. Srinivas Rao &amp; Smt. L. Jayanti
+                D/o Shri M. Surya Prakash &amp; Smt. Krishna Kumari
               </p>
             </div>
 
@@ -463,11 +442,11 @@ function FamilyBlessings() {
               <span className="invitation-weds__line" aria-hidden="true" />
             </div>
 
-            <div className="invitation-person invitation-person--bride">
-              <span className="invitation-person__prefix">Chi. Sow.</span>
-              <h3 className="invitation-person__name">M. Poojitha</h3>
+            <div className="invitation-person invitation-person--groom">
+              <span className="invitation-person__prefix">Chy.</span>
+              <h3 className="invitation-person__name">L. Sunil Kumar</h3>
               <p className="invitation-person__parents">
-                D/o — Shri M. Surya Prakash &amp; Smt. M. Krishna Kumari
+                Elder S/o Shri L. Srinivas Rao &amp; Smt. L. Jayanti
               </p>
             </div>
           </div>
@@ -479,7 +458,7 @@ function FamilyBlessings() {
           </div>
 
           <div className="invitation-group invitation-list">
-            <h3>With Best Compliments From</h3>
+            <h3>WITH BEST COMPLIMENTS FROM</h3>
             <p className="invitation-names-flow">
               {compliments.map((name, i) => (
                 <span key={name} className="invitation-name-tag">
@@ -497,28 +476,13 @@ function FamilyBlessings() {
           </div>
 
           <div className="invitation-group invitation-list">
-            <h3>Awaiting Eyes</h3>
-            <p className="invitation-names-flow">
-              {awaitingEyes.map((name, i) => (
-                <span key={name} className="invitation-name-tag">
-                  {name}
-                  {i < awaitingEyes.length - 1 && <b aria-hidden="true">·</b>}
-                </span>
-              ))}
-            </p>
-          </div>
-
-          <div className="invitation-divider" aria-hidden="true">
-            <span />
-            <i>❦</i>
-            <span />
-          </div>
-
-          <div className="invitation-group invitation-group--closing">
-            <h3>With Blessings of</h3>
+            <h3>R.S.V.P.</h3>
             <p>
-              Your gracious presence and blessings will make this occasion even
-              more special.
+              Shri M. Surya Prakash
+              <br />
+              Smt. Krishna Kumari
+              <br />
+              Sarthak Homes, Flat 131/C, Kukda Road, Kumhari, Dist-Durg (C.G.)
             </p>
           </div>
         </div>
@@ -558,7 +522,7 @@ function CalendarOverview() {
         })}
       </div>
       <p>
-        <i /> Wedding celebrations <b /> Sumuhurthamu
+        <i /> Wedding celebrations <b /> Subha Muhurtham
       </p>
     </div>
   );
@@ -598,6 +562,7 @@ function Schedule() {
                   dateTime={`${event.date}T${event.start}:00+05:30`}
                 >
                   {formatTime(event)} <small>IST</small>
+                  {event.timeNote ? ` ${event.timeNote}` : ""}
                 </time>
               </article>
             ))}
@@ -926,8 +891,8 @@ export function InvitationExperience() {
 
   const share = async () => {
     const data = {
-      title: "Sunil & Poojitha — Wedding Invitation",
-      text: "Join us for Sunil & Poojitha’s wedding celebrations, 11–13 December 2026. Sumuhurthamu: 13 December at 4:05 AM IST.",
+      title: "Poojitha & Sunil — Wedding Invitation",
+      text: "Join us for Poojitha & Sunil’s wedding celebrations, 11–13 December 2026. Sumuhurthamu: 13 December at 4:05 AM IST.",
       url: location.href,
     };
     try {
@@ -972,7 +937,7 @@ export function InvitationExperience() {
           <div data-reveal>
             <h2 id="celebrations-title">Celebrate with us</h2>
             <p>
-              All timings are in India Standard Time (IST). The Sumuhurthamu
+              All timings are in India Standard Time (IST). The Subha Muhurtham
               begins early on 13 December, following the reception night.
             </p>
           </div>
@@ -995,7 +960,7 @@ export function InvitationExperience() {
                 src={invitation.assets.couplePortraitOne}
                 fill
                 sizes="(max-width: 767px) 78vw, 460px"
-                alt="Sunil and Poojitha walking hand in hand"
+                alt="Poojitha and Sunil walking hand in hand"
               />
             </figure>
             <figure className="arched-photo arched-photo--inset">
@@ -1003,7 +968,7 @@ export function InvitationExperience() {
                 src={invitation.assets.couplePortraitTwo}
                 fill
                 sizes="(max-width: 767px) 42vw, 230px"
-                alt="Sunil and Poojitha together by a waterfall"
+                alt="Poojitha and Sunil together by a waterfall"
               />
             </figure>
           </div>
@@ -1015,7 +980,7 @@ export function InvitationExperience() {
               make our celebration complete.
             </p>
             <p className="signature">
-              Sunil <i>&amp;</i> Poojitha
+              Poojitha <i>&amp;</i> Sunil
             </p>
           </div>
         </div>
@@ -1048,11 +1013,7 @@ export function InvitationExperience() {
         <div className="container welcome" data-reveal>
           <p>
             With love   from{" "}
-            <strong>{invitation.family.groomBrother.name}</strong>{" "}
-            <span className="welcome__relation">
-              ({invitation.family.groomBrother.relation})
-            </span>{" "}
-            and <strong>{invitation.family.brideBrother.name}</strong>{" "}
+            <strong>{invitation.family.brideBrother.name}</strong>{" "}
             <span className="welcome__relation">
               ({invitation.family.brideBrother.relation})
             </span>
@@ -1105,7 +1066,7 @@ export function InvitationExperience() {
         <div className="closing__backdrop" aria-hidden="true">
           <Image
             src="/media/closing-bg-clean.webp"
-            alt="Sunil and Poojitha dancing in a flower meadow at sunset"
+            alt="Poojitha and Sunil dancing in a flower meadow at sunset"
             fill
             priority
             quality={92}
@@ -1139,7 +1100,7 @@ export function InvitationExperience() {
           <h2 id="closing-title" className="closing__title">
             With love,
             <br />
-            Sunil <span className="closing__amp">&amp;</span> Poojitha
+            Poojitha <span className="closing__amp">&amp;</span> Sunil
           </h2>
 
           <p className="closing__subtitle">
@@ -1173,7 +1134,7 @@ export function InvitationExperience() {
               className="closing__btn closing__btn--share"
               onClick={share}
               type="button"
-              aria-label="Share Sunil and Poojitha's wedding invitation"
+              aria-label="Share Poojitha and Sunil's wedding invitation"
             >
               <span>{shareLabel === "Share invitation" ? "SHARE INVITATION" : shareLabel.toUpperCase()}</span>
               <svg className="closing__btn-icon" viewBox="0 0 24 24" aria-hidden="true">

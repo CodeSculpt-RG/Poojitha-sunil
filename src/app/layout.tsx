@@ -3,9 +3,9 @@ import { FallingPetals } from "@/components/FallingPetals";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sunil & Poojitha — Wedding Invitation",
+  title: "Poojitha & Sunil — Wedding Invitation",
   description:
-    "Join Sunil and Poojitha for their wedding celebrations, 11–13 December 2026.",
+    "Join Poojitha and Sunil for their wedding celebrations, 11–13 December 2026.",
 };
 
 export const viewport: Viewport = {

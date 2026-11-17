@@ -8,7 +8,7 @@ export function Monogram() {
         width={1254}
         height={1254}
         sizes="(max-width: 900px) 100vw, 420px"
-        alt="Illustration of Sunil and Poojitha together beneath a tree"
+        alt="Illustration of Poojitha and Sunil together beneath a tree"
       />
     </figure>
   );

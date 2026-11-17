@@ -1,6 +1,6 @@
-# Sunil & Poojitha — Wedding Invitation
+# Poojitha & Sunil — Wedding Invitation
 
-A responsive Next.js wedding invitation for Sunil and Poojitha, built as a continuous storytelling page with their supplied photographs, film, pet artwork, full celebration schedule, venue search, calendar downloads, countdown, and sharing.
+A responsive Next.js wedding invitation for Poojitha and Sunil, built as a continuous storytelling page with their supplied photographs, film, pet artwork, full celebration schedule, venue search, calendar downloads, countdown, and sharing.
 
 ## Run locally
 

@@ -5,12 +5,13 @@ export type WeddingEvent = {
   description?: string;
   start: string;
   end?: string;
+  timeNote?: string;
   venue?: string;
   featured?: boolean;
 };
 
 export const invitation = {
-  couple: { first: "Sunil", second: "Poojitha", display: "Sunil & Poojitha" },
+  couple: { first: "Poojitha", second: "Sunil", display: "Poojitha & Sunil" },
   dateLine: "11–13 December 2026",
   timezone: "Asia/Kolkata",
   muhurthamISO: "2026-12-13T04:05:00+05:30",
@@ -22,11 +23,6 @@ export const invitation = {
       "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
   },
   family: {
-    groomBrother: {
-      name: "Sheshu",
-      relation: "Groom's Brother",
-      note: "Watching my brother begin this beautiful new chapter is a moment I will always cherish. Sunil and Poojitha, may your life together be filled with endless happiness, laughter, love, and memories that grow more beautiful with every passing year. So happy to celebrate this special day with both of you.",
-    },
     brideBrother: {
       name: "Sai",
       relation: "Bride's Brother",
@@ -45,45 +41,38 @@ export const invitation = {
     {
       id: "rata",
       date: "2026-12-11",
-      label: "Rata Snanamu",
-      description:
-        "Sacred commencement and morning ritual marking the beginning of festivities.",
-      start: "07:30",
-      end: "08:30",
+      label: "Pandiri Rata",
+      description: "Following Mehandi at Residence.",
+      start: "08:00",
+      venue: "Residence",
     },
     {
       id: "pradanam",
       date: "2026-12-12",
-      label: "Pradanamu",
-      description:
-        "The sacred engagement and formal exchange of wedding auspiciousness.",
+      label: "Pradanam",
+      description: "At the venue.",
       start: "08:00",
-    },
-    {
-      id: "haldi",
-      date: "2026-12-12",
-      label: "Mangala Snanamu",
-      description:
-        "Traditional turmeric ceremony and joyful celebrations with family.",
-      start: "14:30",
-      featured: true,
+      end: "08:50",
     },
     {
       id: "reception",
       date: "2026-12-12",
-      label: "Sangeetham & Reception",
+      label: "Reception & Dinner",
       description:
-        "An evening of music, dinner, and togetherness with family and friends.",
-      start: "19:30",
+        "Venue: Agrasen Bhavan, New Khursipar, Bhilai, Distt. Durg (C.G.).",
+      start: "19:00",
+      timeNote: "onwards",
+      venue: "Agrasen Bhavan, New Khursipar, Bhilai, Distt. Durg (C.G.)",
       featured: true,
     },
     {
       id: "muhurtham",
       date: "2026-12-13",
-      label: "Sumuhurthamu",
+      label: "Subha Muhurtham",
       description:
-        "Jeelakarra Bellam & Mangalyadharana in the auspicious Brahma Muhurtham.",
+        "Margashira Masam, Uttarashada Nakshatram, Tula Lagnam.",
       start: "04:05",
+      timeNote: "(early morning)",
       venue:
         "Agrasen Bhavan, New Khursipar, 6C53+2WF, New Khursipar, Bhilai,Distt, Chhattisgarh 490011",
       featured: true,
