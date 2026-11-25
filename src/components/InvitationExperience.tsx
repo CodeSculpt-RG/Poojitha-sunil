@@ -364,6 +364,17 @@ function FamilyBlessings() {
   ];
 
   const awaitingEyes = [
+    "Srinu",
+    "Nagmani",
+    "Harshit",
+    "Lakshya",
+    "Vindhya",
+    "Tullika",
+    "Supraja",
+    "Rakesh",
+    "Kusuma",
+    "Binesh",
+    "Gautami",
     "Sunitha",
     "Pradeep",
     "Kiran Sushmita",
